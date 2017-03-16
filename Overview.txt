@@ -1,23 +1,26 @@
-Myœlê, ¿e lepiej bedzie jak zrobimy to po³¹czenie pomiêdzy komputerami, bo gra w scrabble raczej bedzie ma³o czytelna na
+MyÅ›lÄ™, Å¼e lepiej bedzie jak zrobimy to poÅ‚Ä…czenie pomiÄ™dzy komputerami, bo gra w scrabble raczej bedzie maÅ‚o czytelna na
 telefonach ;). 
 
-Metody po³¹czenia pomiêdzy komputerami:
+Metody poÅ‚Ä…czenia pomiÄ™dzy komputerami:
 
 1) Kabel ethernet 
 
-Ogólnie to jest podejœcie Klient serwer. Z tego co rozumiem, jeden komputer bedzie serwerem, drugi zaœ klientem.
-Na ka¿dy z komuterów bêdzie nieco inny program. Prowadz¹cy coœ tam mówi³, ¿ebyœmy nie robili tego po³¹czenia przez internet
-(tak mi siê wydaje) i nie wiem czy to nie mówi³, ¿ebyœmy tego rozwi¹zania nie robili.
+OgÃ³lnie to jest podejÅ›cie Klient serwer. Z tego co rozumiem, jeden komputer bedzie serwerem, drugi zaÅ› klientem.
+Na kaÅ¼dy z komuterÃ³w bÄ™dzie nieco inny program. ProwadzÄ…cy coÅ› tam mÃ³wiÅ‚, Å¼ebyÅ›my nie robili tego poÅ‚Ä…czenia przez internet
+(tak mi siÄ™ wydaje) i nie wiem czy to nie mÃ³wiÅ‚, Å¼ebyÅ›my tego rozwiÄ…zania nie robili.
 
 http://www.javaworld.com/article/2077322/core-java/core-java-sockets-programming-in-java-a-tutorial.html
 
 http://stackoverflow.com/questions/28308584/connecting-two-computers-for-client-server-communication-in-java
 
+http://docs.oracle.com/javase/tutorial/networking/sockets/
+
+jak zrobiÄ‡ komunikator w javie - http://docstore.mik.ua/orelly/java-ent/servlet/ch10_03.htm
 
 2) Bluetooth
 
-Ewentualnie mo¿emy siê po³¹czyæ w ten sposób pomiêdzy komputerami. Biblioteki (ale ma³o jest tutoriali w sieci):
+Ewentualnie moÅ¼emy siÄ™ poÅ‚Ä…czyÄ‡ w ten sposÃ³b pomiÄ™dzy komputerami. Biblioteki (ale maÅ‚o jest tutoriali w sieci):
 
 http://www.bluecove.org/
 
-Jak masz jeszcze inne podejœcie to dawaj! :) 
+Jak masz jeszcze inne podejÅ›cie to dawaj! :) 
