@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane minHeight="560.0" minWidth="800.0" style="-fx-background-image: board_background.jpg;" styleClass="pane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <TextField prefHeight="530.0" prefWidth="530.0" />
+            <VBox prefHeight="200.0" prefWidth="225.0" spacing="12.0">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="225.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view">
+                     <image>
+                        <Image url="@../../../../../resources/Scrabble_logo.png" />
+                     </image>
+                  </ImageView>
+                  <TextArea prefHeight="150.0" prefWidth="200.0" />
+                  <HBox spacing="3.0">
+                     <children>
+                        <Label text="Gracz 1" />
+                        <Label text="0 punktów" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="3.0">
+                     <children>
+                        <Label text="Gracz 2" />
+                        <Label text="0 punktów" />
+                     </children>
+                  </HBox>
+                  <Label text="Worek: 100 płytek" />
+                  <Label text="LITERKI TUTAJ" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" text="Zatwierdź" />
+                        <Button mnemonicParsing="false" text="Wymień" />
+                        <Button mnemonicParsing="false" text="Pasuj" />
+                     </children>
+                  </HBox>
+               </children>
+               <HBox.margin>
+                  <Insets bottom="15.0" right="15.0" top="15.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
