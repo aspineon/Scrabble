@@ -8,15 +8,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane minHeight="560.0" minWidth="800.0" styleClass="pane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<AnchorPane minHeight="560.0" minWidth="800.0" style="-fx-background-image: board_background.jpg;" styleClass="pane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TextField prefHeight="530.0" prefWidth="530.0" style="-fx-background-color: rgba(255,255,255,0.5);">
-               <HBox.margin>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-               </HBox.margin>
-            </TextField>
+            <TextField prefHeight="530.0" prefWidth="530.0" />
             <VBox prefHeight="200.0" prefWidth="225.0" spacing="12.0">
                <children>
                   <ImageView fitHeight="150.0" fitWidth="225.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view">
