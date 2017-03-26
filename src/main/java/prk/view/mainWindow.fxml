@@ -1182,10 +1182,10 @@
                <children>
                   <ImageView fitHeight="150.0" fitWidth="225.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view">
                      <image>
-                        <Image url="@../../../../../resources/Scrabble_logo.png" />
+                        <Image url="@Scrabble_logo.png" />
                      </image>
                   </ImageView>
-                  <TextArea prefHeight="150.0" prefWidth="200.0" />
+                  <TextArea fx:id="textarea" prefHeight="150.0" prefWidth="200.0" />
                   <HBox spacing="3.0">
                      <children>
                         <Label text="Gracz 1" />
@@ -1202,7 +1202,7 @@
                   <Label text="LITERKI TUTAJ" />
                   <HBox spacing="10.0">
                      <children>
-                        <Button mnemonicParsing="false" text="Zatwierdź" />
+                        <Button mnemonicParsing="false" onAction="#confirm" text="Zatwierdź" />
                         <Button mnemonicParsing="false" text="Wymień" />
                         <Button mnemonicParsing="false" text="Pasuj" />
                      </children>
