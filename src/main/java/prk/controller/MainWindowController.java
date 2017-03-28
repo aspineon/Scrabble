@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import prk.model.TextFieldLimited;
+
 
 public class MainWindowController {
 
@@ -14,6 +16,7 @@ public class MainWindowController {
 
 	@FXML
 	TextArea textarea;
+	@FXML TextFieldLimited txt00;
 
 	public void setServerApp(ServerApp app, Stage primaryStage) {
 		this.serverApp = app;
