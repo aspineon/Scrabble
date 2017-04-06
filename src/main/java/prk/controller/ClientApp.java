@@ -63,7 +63,7 @@ public class ClientApp extends Application {
 	}
 
 	public boolean isServer() {
-		return false;
+		return false; 
 	}
 //
 //	public Stage getPrimaryStage() {
