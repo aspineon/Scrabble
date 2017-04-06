@@ -4,6 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import prk.model.ScrabbleBoard;
+import prk.model.TextFieldLimited;
+
 
 public class MainWindowController {
 
@@ -11,9 +14,11 @@ public class MainWindowController {
 	private ServerApp serverApp;
 	private ClientApp clientApp;
 	private boolean isServer;
+	private ScrabbleBoard scrabbleBoard;
 
 	@FXML
 	TextArea textarea;
+	@FXML TextFieldLimited txt00, txt01;
 
 	public void setServerApp(ServerApp app, Stage primaryStage) {
 		this.serverApp = app;
@@ -47,5 +52,9 @@ public class MainWindowController {
 
 	public TextArea getTextarea() {
 		return textarea;
+	}
+	
+	public void textFieldToMatrix(){
+		
 	}
 }
