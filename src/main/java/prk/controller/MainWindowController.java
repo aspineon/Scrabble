@@ -33,7 +33,7 @@ public class MainWindowController {
 
 	public void confirm() {
 		String message = this.isServer ? "Server: " : "Client: ";
-		message += "confirmPressed";
+		message += "confirm2Pressed";
 		textarea.appendText(message + "\n");
 		try {
 			if (this.isServer)
