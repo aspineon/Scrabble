@@ -1199,8 +1199,8 @@
                         <Label text="0 punktów" />
                      </children>
                   </HBox>
-                  <Label text="Worek: 100 płytek" />
-                  <Label text="LITERKI TUTAJ" />
+                  <Label fx:id="labelBag" text="Worek: 100 płytek" />
+                  <Label fx:id="labelLetters" text="LITERKI TUTAJ" />
                   <HBox spacing="10.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#confirm" text="Zatwierdź" />

@@ -1,6 +1,7 @@
 package prk.controller;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -11,13 +12,13 @@ import prk.network.Client;
 import prk.network.NetworkConnection;
 
 public class ClientApp extends Application {
-	
+
 	private MainWindowController mainWindowController;
-	
+
 	private Stage primaryStage;
 	private NetworkConnection connection = createClient();
 
-	public void mainWindow() {
+	public void mainWindow() throws Exception {
 		FXMLLoader loader = new FXMLLoader(ClientApp.class.getResource("/prk/view/mainWindow.fxml"));
 		AnchorPane root = null;
 		try {
@@ -27,7 +28,8 @@ public class ClientApp extends Application {
 		}
 		mainWindowController = loader.getController();
 		mainWindowController.setClientApp(this, primaryStage);
-		
+		mainWindowController.confirmConnection();
+
 		Scene scene = new Scene(root);
 		scene.getStylesheets().add("/prk/view/mainWindow.css");
 		primaryStage.setMinHeight(560);
@@ -35,9 +37,9 @@ public class ClientApp extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
-	
+
 	@Override
-	public void init() throws Exception{
+	public void init() throws Exception {
 		connection.startConnection();
 	}
 
@@ -46,30 +48,53 @@ public class ClientApp extends Application {
 		this.primaryStage = primaryStage;
 		mainWindow();
 	}
-	
+
 	@Override
-	public void stop() throws Exception{
+	public void stop() throws Exception {
 		connection.closeConnection();
 	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
-	
-	private Client createClient(){
+
+	private Client createClient() {
 		return new Client("localhost", 55555, data -> {
-			mainWindowController.getTextarea().appendText(data.toString() + "\n");
+			if (data.toString().matches("WELCOMELETTERS \\D+")) {
+				mainWindowController.getTextarea().appendText("Gracz 1 się połączył" + "\n");
+				String player1Letters = data.toString().substring(15, 28);
+				String player2Letters = data.toString().substring(29, 42);
+				
+				//wczytanie liter dla Playera 1 (serwera)
+				int counter = 0;
+				for (int i = 0; i < 7; i++) {
+					mainWindowController.getGame().getPlayer1().getLetters()[i] = player1Letters.charAt(counter);
+					counter = counter + 2;
+				}
+
+				//wczytanie liter dla Playera 2 {klienta}
+				counter = 0;
+				for (int i = 0; i < 7; i++) {
+					mainWindowController.getGame().getPlayer2().getLetters()[i] = player2Letters.charAt(counter);
+					counter = counter + 2;
+				}
+				
+				// test czy dobrze się wczytały litery
+				StringBuilder letters = new StringBuilder();
+				for (char c : mainWindowController.getGame().getPlayer2().getLetters()) {
+					letters.append(c).append(" ");
+				}
+				mainWindowController.getLabelLetters().setText(letters.toString());
+			} else {
+				mainWindowController.getTextarea().appendText(data.toString() + "\n");
+			}
 		});
 	}
 
 	public boolean isServer() {
-		return false; 
+		return false;
 	}
-//
-//	public Stage getPrimaryStage() {
-//		return primaryStage;
-//	}
-//
+
 	public NetworkConnection getConnection() {
 		return connection;
 	}

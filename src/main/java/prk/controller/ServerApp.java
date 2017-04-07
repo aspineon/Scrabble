@@ -12,9 +12,9 @@ import prk.network.NetworkConnection;
 import prk.network.Server;
 
 public class ServerApp extends Application {
-	
+
 	private MainWindowController mainWindowController;
-	
+
 	private Stage primaryStage;
 	private NetworkConnection connection = createServer();
 
@@ -28,7 +28,7 @@ public class ServerApp extends Application {
 		}
 		mainWindowController = loader.getController();
 		mainWindowController.setServerApp(this, primaryStage);
-		
+
 		Scene scene = new Scene(root);
 		scene.getStylesheets().add("/prk/view/mainWindow.css");
 		primaryStage.setMinHeight(560);
@@ -36,9 +36,9 @@ public class ServerApp extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
-	
+
 	@Override
-	public void init() throws Exception{
+	public void init() throws Exception {
 		connection.startConnection();
 	}
 
@@ -47,40 +47,47 @@ public class ServerApp extends Application {
 		this.primaryStage = primaryStage;
 		mainWindow();
 	}
-	
+
 	@Override
-	public void stop() throws Exception{
+	public void stop() throws Exception {
 		connection.closeConnection();
 	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
-	
-	// potrzbne? public abstract boolean isServer();
-	
-	private Server createServer(){
+
+	private Server createServer() {
 		return new Server(55555, data -> {
-			Platform.runLater(() -> {
-				mainWindowController.getTextarea().appendText(data.toString() + "\n");
-			});
+			if (data.toString().equals("Gracz 2 się połączył")) {
+				Platform.runLater(() -> {
+					mainWindowController.getTextarea().appendText(data.toString() + "\n");
+				});
+				StringBuilder welcomeLetters = new StringBuilder();
+				welcomeLetters.append("WELCOMELETTERS ");
+				for (char c : mainWindowController.getGame().getPlayer1().getLetters()) {
+					welcomeLetters.append(c).append(" ");
+				}
+				for (char c : mainWindowController.getGame().getPlayer2().getLetters()) {
+					welcomeLetters.append(c).append(" ");
+				}
+				try {
+					mainWindowController.getServerApp().getConnection().send(welcomeLetters);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				Platform.runLater(() -> {
+					mainWindowController.getTextarea().appendText(data.toString() + "\n");
+				});
+			}
 		});
 	}
-	
-//	private Client createClient(){
-//		return new Client("localhost", 55555, data -> {
-//			mainWindowController.getMessages().appendText(data.toString() + "\n");
-//		});
-//	}
 
 	public boolean isServer() {
 		return true;
 	}
-//
-//	public Stage getPrimaryStage() {
-//		return primaryStage;
-//	}
-//
+
 	public NetworkConnection getConnection() {
 		return connection;
 	}
