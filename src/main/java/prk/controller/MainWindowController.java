@@ -43,7 +43,7 @@ public class MainWindowController {
 		this.primaryStage = primaryStage;
 		this.isServer = false;
 		
-		game = new Game(true);
+		game = new Game(false);
 	}
 
 	public void initialize() {
@@ -53,6 +53,8 @@ public class MainWindowController {
 		String message = this.isServer ? "Server: " : "Client: ";
 		message += "confirmPressed";
 		textarea.appendText(message + "\n");
+		game.getBag().findAndSubtract('A');
+		getLabelBag().setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 		try {
 			if (this.isServer)
 				serverApp.getConnection().send(message);
@@ -87,7 +89,7 @@ public class MainWindowController {
 		return labelLetters;
 	}
 
-	public void setLabelLetters(Label labelLetters) {
-		this.labelLetters = labelLetters;
+	public Label getLabelBag() {
+		return labelBag;
 	}
 }

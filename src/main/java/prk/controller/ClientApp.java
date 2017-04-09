@@ -6,8 +6,12 @@ import java.util.Scanner;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import prk.model.Bag;
+import prk.model.ScrabblePlayer;
 import prk.network.Client;
 import prk.network.NetworkConnection;
 
@@ -60,33 +64,45 @@ public class ClientApp extends Application {
 
 	private Client createClient() {
 		return new Client("localhost", 55555, data -> {
+			TextArea textarea = mainWindowController.getTextarea();
+			Bag bag = mainWindowController.getGame().getBag();
+			ScrabblePlayer player1 = mainWindowController.getGame().getPlayer1();
+			ScrabblePlayer player2 = mainWindowController.getGame().getPlayer2();
+			Label labelBag = mainWindowController.getLabelBag();
+			Label labelLetters = mainWindowController.getLabelLetters();
+			
 			if (data.toString().matches("WELCOMELETTERS \\D+")) {
-				mainWindowController.getTextarea().appendText("Gracz 1 się połączył" + "\n");
+				textarea.appendText("Gracz 1 się połączył" + "\n");
 				String player1Letters = data.toString().substring(15, 28);
 				String player2Letters = data.toString().substring(29, 42);
-				
+
 				//wczytanie liter dla Playera 1 (serwera)
 				int counter = 0;
 				for (int i = 0; i < 7; i++) {
-					mainWindowController.getGame().getPlayer1().getLetters()[i] = player1Letters.charAt(counter);
+					char c = player1Letters.charAt(counter);
+					bag.findAndSubtract(c);
+					player1.getLetters()[i] = c;
 					counter = counter + 2;
 				}
 
 				//wczytanie liter dla Playera 2 {klienta}
 				counter = 0;
 				for (int i = 0; i < 7; i++) {
-					mainWindowController.getGame().getPlayer2().getLetters()[i] = player2Letters.charAt(counter);
+					char c = player2Letters.charAt(counter);
+					bag.findAndSubtract(c);
+					player2.getLetters()[i] = c;
 					counter = counter + 2;
 				}
-				
+
 				// test czy dobrze się wczytały litery
 				StringBuilder letters = new StringBuilder();
-				for (char c : mainWindowController.getGame().getPlayer2().getLetters()) {
+				for (char c : player2.getLetters()) {
 					letters.append(c).append(" ");
 				}
-				mainWindowController.getLabelLetters().setText(letters.toString());
+				labelLetters.setText(letters.toString());
+				labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
 			} else {
-				mainWindowController.getTextarea().appendText(data.toString() + "\n");
+				textarea.appendText(data.toString() + "\n");
 			}
 		});
 	}

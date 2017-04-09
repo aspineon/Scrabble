@@ -29,6 +29,17 @@ public class Bag {
 		return randomLetters;
 	}
 
+	public void findAndSubtract(char c) {
+		int i = 0;
+		while (!Character.valueOf(c).equals(letters[i])) {
+			i++;
+		}
+		if (numberOfLetters[i] > 0) {
+			numberOfLetters[i]--;
+			lettersLeft--;
+		} 
+	}
+
 	public int[] getNumberOfLetters() {
 		return numberOfLetters;
 	}

@@ -26,32 +26,15 @@ public class Game {
 		return player1;
 	}
 
-	public void setPlayer1(ScrabblePlayer player1) {
-		this.player1 = player1;
-	}
-
 	public ScrabblePlayer getPlayer2() {
 		return player2;
-	}
-
-	public void setPlayer2(ScrabblePlayer player2) {
-		this.player2 = player2;
 	}
 
 	public ScrabbleBoard getBoard() {
 		return board;
 	}
 
-	public void setBoard(ScrabbleBoard board) {
-		this.board = board;
-	}
-
 	public Bag getBag() {
 		return bag;
 	}
-
-	public void setBag(Bag bag) {
-		this.bag = bag;
-	}
-
 }
