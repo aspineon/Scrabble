@@ -57,7 +57,7 @@ public class ClientApp extends Application {
 	}
 	
 	private Client createClient(){
-		return new Client("localhost", 55555, data -> {
+		return new Client("192.168.1.20", 55555, data -> {
 			mainWindowController.getTextarea().appendText(data.toString() + "\n");
 		});
 	}
