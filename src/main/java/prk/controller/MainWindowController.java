@@ -6,11 +6,12 @@ import java.util.Scanner;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import prk.model.Game;
 import prk.model.ScrabbleBoard;
 import prk.model.TextFieldLimited;
-
 
 public class MainWindowController {
 
@@ -19,12 +20,17 @@ public class MainWindowController {
 	private ServerApp serverApp;
 	private ClientApp clientApp;
 	private boolean isServer;
+	private Game game;
+
+	@FXML
+	private TextArea textarea;
+	@FXML
+	private Label labelBag, labelLetters;
+	
 	private ScrabbleBoard scrabbleBoard;
 	@FXML private ArrayList<ArrayList<TextFieldLimited>> textFieldBoard;
 	char[][] tempBoard = new char[15][15];
-
-	@FXML
-	TextArea textarea;
+	
 	@FXML private TextFieldLimited txt00_00, txt00_01, txt00_02, txt00_03, txt00_04, txt00_05, txt00_06, txt00_07, txt00_08, txt00_09, txt00_10, txt00_11, txt00_12, txt00_13, txt00_14;
 	@FXML private TextFieldLimited txt01_00, txt01_01, txt01_02, txt01_03, txt01_04, txt01_05, txt01_06, txt01_07, txt01_08, txt01_09, txt01_10, txt01_11, txt01_12, txt01_13, txt01_14;
 	@FXML private TextFieldLimited txt02_00, txt02_01, txt02_02, txt02_03, txt02_04, txt02_05, txt02_06, txt02_07, txt02_08, txt02_09, txt02_10, txt02_11, txt02_12, txt02_13, txt02_14;
@@ -41,29 +47,41 @@ public class MainWindowController {
 	@FXML private TextFieldLimited txt13_00, txt13_01, txt13_02, txt13_03, txt13_04, txt13_05, txt13_06, txt13_07, txt13_08, txt13_09, txt13_10, txt13_11, txt13_12, txt13_13, txt13_14;
 	@FXML private TextFieldLimited txt14_00, txt14_01, txt14_02, txt14_03, txt14_04, txt14_05, txt14_06, txt14_07, txt14_08, txt14_09, txt14_10, txt14_11, txt14_12, txt14_13, txt14_14;
 	
-	
 	@FXML 
 	private void initialize(){
 		scrabbleBoard = new ScrabbleBoard();
 	}
+
 	public void setServerApp(ServerApp app, Stage primaryStage) {
 		this.serverApp = app;
 		this.primaryStage = primaryStage;
 		this.isServer = true;
+
+		game = new Game(true);
+		StringBuilder letters = new StringBuilder();
+		for (char c : game.getPlayer1().getLetters()) {
+			letters.append(c).append(" ");
+		}
+		labelLetters.setText(letters.toString());
+		labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 	}
 
 	public void setClientApp(ClientApp app, Stage primaryStage) {
 		this.clientApp = app;
 		this.primaryStage = primaryStage;
 		this.isServer = false;
+		
+		game = new Game(false);
 	}
-
+	
 	public void confirm() {
 
 		//message = this.isServer ? "Server: " : "Client: ";
 		//message += "confirmPressed";
 		String message = scrabbleBoard.getNewWord(convertTextFieldToChar());
 		textarea.appendText(message + "\n");
+		game.getBag().findAndSubtract('A');
+		getLabelBag().setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 		try {
 			if (this.isServer)
 				serverApp.getConnection().send(message);
@@ -84,7 +102,32 @@ public class MainWindowController {
 		}
 		return tempBoard;
 	}
+
+	public void confirmConnection() throws Exception {
+		clientApp.getConnection().send("Gracz 2 się połączył");
+	}
+
 	public TextArea getTextarea() {
 		return textarea;
+	}
+
+	public void textFieldToMatrix() {
+
+	}
+
+	public ServerApp getServerApp() {
+		return serverApp;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
+	public Label getLabelLetters() {
+		return labelLetters;
+	}
+
+	public Label getLabelBag() {
+		return labelBag;
 	}
 }
