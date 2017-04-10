@@ -63,7 +63,7 @@ public class ClientApp extends Application {
 	}
 
 	private Client createClient() {
-		return new Client("localhost", 55555, data -> {
+		return new Client("192.168.1.20", 55555, data -> {
 			TextArea textarea = mainWindowController.getTextarea();
 			Bag bag = mainWindowController.getGame().getBag();
 			ScrabblePlayer player1 = mainWindowController.getGame().getPlayer1();
