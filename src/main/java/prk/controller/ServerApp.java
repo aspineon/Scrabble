@@ -79,6 +79,7 @@ public class ServerApp extends Application {
 			} else {
 				Platform.runLater(() -> {
 					mainWindowController.getTextarea().appendText(data.toString() + "\n");
+					mainWindowController.getNewWordToBoard(data.toString());
 				});
 			}
 		});

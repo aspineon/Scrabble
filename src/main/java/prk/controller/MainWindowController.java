@@ -102,6 +102,14 @@ public class MainWindowController {
 		}
 		return tempBoard;
 	}
+	
+	public void getNewWordToBoard(String message){
+		Scanner in = new Scanner(message).useDelimiter(",");
+		
+		while (in.hasNext()){
+			textFieldBoard.get(in.nextInt()).get(in.nextInt()).setText(in.next());
+		}
+	}
 
 	public void confirmConnection() throws Exception {
 		clientApp.getConnection().send("Gracz 2 się połączył");

@@ -103,6 +103,7 @@ public class ClientApp extends Application {
 				labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
 			} else {
 				textarea.appendText(data.toString() + "\n");
+				mainWindowController.getNewWordToBoard(data.toString());
 			}
 		});
 	}
