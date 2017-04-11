@@ -119,6 +119,7 @@ public class ClientApp extends Application {
 				game.setPlayer2Turn();				
 			} else {
 				textarea.appendText(data.toString() + "\n");
+				mainWindowController.addNewWordToBoard(data.toString());
 			}
 		});
 	}

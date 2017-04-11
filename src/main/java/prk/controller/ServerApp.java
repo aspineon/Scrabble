@@ -88,7 +88,8 @@ public class ServerApp extends Application {
 				mainWindowController.getTextarea().appendText(message + "\n");
 				mainWindowController.getGame().setPlayer1Turn();
 			} else {
-					mainWindowController.getTextarea().appendText(data.toString() + "\n");
+				mainWindowController.getTextarea().appendText(data.toString() + "\n");
+				mainWindowController.addNewWordToBoard(data.toString());
 			}
 		});
 	}

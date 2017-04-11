@@ -6,7 +6,7 @@ public class ScrabbleBoard {
 
 	private char[][] charCurrentBoard = new char[15][15];
 	
-	public String getNewWord(char[][] newBoard){
+	public String getNewWordFromBoard(char[][] newBoard){
 		
 		char[][] tempBoard = newBoard;
 		
