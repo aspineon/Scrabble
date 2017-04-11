@@ -15,7 +15,6 @@ import prk.model.TextFieldLimited;
 
 public class MainWindowController {
 
-	
 	private Stage primaryStage;
 	private ServerApp serverApp;
 	private ClientApp clientApp;
@@ -80,7 +79,6 @@ public class MainWindowController {
 		//message += "confirmPressed";
 		String message = scrabbleBoard.getNewWord(convertTextFieldToChar());
 		textarea.appendText(message + "\n");
-		game.getBag().findAndSubtract('A');
 		getLabelBag().setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 		try {
 			if (this.isServer)
