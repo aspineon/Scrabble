@@ -83,10 +83,12 @@ public class ServerApp extends Application {
 				}
 				mainWindowController.getTextarea()
 						.appendText("Zaczyna " + mainWindowController.getGame().getStartingPlayer() + "\n");
+			} else if (data.toString().matches("LEAVETURN .+")) {
+				String message = data.toString().substring(10);
+				mainWindowController.getTextarea().appendText(message + "\n");
+				mainWindowController.getGame().setPlayer1Turn();
 			} else {
-				Platform.runLater(() -> {
 					mainWindowController.getTextarea().appendText(data.toString() + "\n");
-				});
 			}
 		});
 	}

@@ -1467,8 +1467,8 @@
                   <HBox spacing="10.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#confirm" text="Zatwierdź" />
-                        <Button mnemonicParsing="false" text="Wymień" />
-                        <Button mnemonicParsing="false" text="Pasuj" />
+                        <Button mnemonicParsing="false" onAction="#changeLetters" text="Wymień" />
+                        <Button mnemonicParsing="false" onAction="#leaveTurn" text="Pasuj" />
                      </children>
                   </HBox>
                </children>

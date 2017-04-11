@@ -113,6 +113,10 @@ public class ClientApp extends Application {
 					textarea.appendText("Zaczyna Gracz 2!" + "\n");
 				}
 
+			} else if (data.toString().matches("LEAVETURN .+")) {
+				String message = data.toString().substring(10);
+				textarea.appendText(message + "\n");
+				game.setPlayer2Turn();				
 			} else {
 				textarea.appendText(data.toString() + "\n");
 			}
