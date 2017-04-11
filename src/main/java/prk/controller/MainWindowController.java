@@ -27,7 +27,6 @@ public class MainWindowController {
 	@FXML
 	private Label labelBag, labelLetters;
 	
-	private ScrabbleBoard scrabbleBoard;
 	@FXML private ArrayList<ArrayList<TextFieldLimited>> textFieldBoard;
 	char[][] tempBoard = new char[15][15];
 	
@@ -47,11 +46,6 @@ public class MainWindowController {
 	@FXML private TextFieldLimited txt13_00, txt13_01, txt13_02, txt13_03, txt13_04, txt13_05, txt13_06, txt13_07, txt13_08, txt13_09, txt13_10, txt13_11, txt13_12, txt13_13, txt13_14;
 	@FXML private TextFieldLimited txt14_00, txt14_01, txt14_02, txt14_03, txt14_04, txt14_05, txt14_06, txt14_07, txt14_08, txt14_09, txt14_10, txt14_11, txt14_12, txt14_13, txt14_14;
 	
-	@FXML 
-	private void initialize(){
-		scrabbleBoard = new ScrabbleBoard();
-	}
-
 	public void setServerApp(ServerApp app, Stage primaryStage) {
 		this.serverApp = app;
 		this.primaryStage = primaryStage;
@@ -78,7 +72,7 @@ public class MainWindowController {
 
 		//message = this.isServer ? "Server: " : "Client: ";
 		//message += "confirmPressed";
-		String message = scrabbleBoard.getNewWord(convertTextFieldToChar());
+		String message = game.getBoard().getNewWordFromBoard(convertTextFieldToChar());
 		textarea.appendText(message + "\n");
 		game.getBag().findAndSubtract('A');
 		getLabelBag().setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
@@ -103,7 +97,9 @@ public class MainWindowController {
 		return tempBoard;
 	}
 	
-	public void getNewWordToBoard(String message){
+	public void addNewWordToBoard(String message){
+		
+		game.getBoard().addNewWordToCharBoard(message);
 		Scanner in = new Scanner(message).useDelimiter(",");
 		
 		while (in.hasNext()){
