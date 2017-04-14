@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import prk.model.Bag;
+import prk.model.Game;
 import prk.model.ScrabblePlayer;
 import prk.network.Client;
 import prk.network.NetworkConnection;
@@ -63,20 +64,21 @@ public class ClientApp extends Application {
 	}
 
 	private Client createClient() {
-		return new Client("192.168.1.20", 55555, data -> {
+		return new Client("localhost", 55555, data -> {
 			TextArea textarea = mainWindowController.getTextarea();
 			Bag bag = mainWindowController.getGame().getBag();
+			Game game = mainWindowController.getGame();
 			ScrabblePlayer player1 = mainWindowController.getGame().getPlayer1();
 			ScrabblePlayer player2 = mainWindowController.getGame().getPlayer2();
 			Label labelBag = mainWindowController.getLabelBag();
 			Label labelLetters = mainWindowController.getLabelLetters();
-			
-			if (data.toString().matches("WELCOMELETTERS \\D+")) {
+
+			if (data.toString().matches("WELCOMELETTERS \\D* \\d*")) {
 				textarea.appendText("Gracz 1 się połączył" + "\n");
 				String player1Letters = data.toString().substring(15, 28);
 				String player2Letters = data.toString().substring(29, 42);
 
-				//wczytanie liter dla Playera 1 (serwera)
+				// wczytanie liter dla Playera 1 (serwera)
 				int counter = 0;
 				for (int i = 0; i < 7; i++) {
 					char c = player1Letters.charAt(counter);
@@ -85,7 +87,7 @@ public class ClientApp extends Application {
 					counter = counter + 2;
 				}
 
-				//wczytanie liter dla Playera 2 {klienta}
+				// wczytanie liter dla Playera 2 {klienta}
 				counter = 0;
 				for (int i = 0; i < 7; i++) {
 					char c = player2Letters.charAt(counter);
@@ -101,6 +103,20 @@ public class ClientApp extends Application {
 				}
 				labelLetters.setText(letters.toString());
 				labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
+
+				// wczytanie informacji kto zaczyna grę
+				if (data.toString().substring(43, 44).equals("1")) {
+					game.setPlayer1Turn();
+					textarea.appendText("Zaczyna Gracz 1!" + "\n");
+				} else {
+					game.setPlayer2Turn();
+					textarea.appendText("Zaczyna Gracz 2!" + "\n");
+				}
+
+			} else if (data.toString().matches("LEAVETURN .+")) {
+				String message = data.toString().substring(10);
+				textarea.appendText(message + "\n");
+				game.setPlayer2Turn();				
 			} else {
 				textarea.appendText(data.toString() + "\n");
 				mainWindowController.addNewWordToBoard(data.toString());
