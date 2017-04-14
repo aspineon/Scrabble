@@ -51,7 +51,7 @@
                   <RowConstraints maxHeight="-Infinity" minHeight="33.0" prefHeight="33.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <TextFieldLimited fx:id="txt00_00" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="30.0">
+                  <TextFieldLimited fx:id="txt00_00" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="30.0" >
                      <font>
                         <Font name="System Bold" size="28.0" />
                      </font>
@@ -1180,7 +1180,8 @@
                <HBox.margin>
                   <Insets left="38.0" top="35.0" />
                </HBox.margin>
-               <fx:define>
+            </GridPane>
+             <fx:define>
                 <ArrayList fx:id="textFieldBoard">
                	 <ArrayList>
                		<fx:reference source="txt00_00"/>
@@ -1441,7 +1442,6 @@
                 </ArrayList>
                </fx:define>
                
-            </GridPane>
             <VBox prefHeight="200.0" prefWidth="225.0" spacing="12.0">
                <children>
                   <ImageView fitHeight="150.0" fitWidth="225.0" pickOnBounds="true" preserveRatio="true" styleClass="image-view">

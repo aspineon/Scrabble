@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import prk.model.Game;
 import prk.model.ScrabbleBoard;
@@ -21,6 +22,7 @@ public class MainWindowController {
 	private ClientApp clientApp;
 	private boolean isServer;
 	private Game game;
+	private TextField text;
 
 	@FXML
 	private TextArea textarea;
