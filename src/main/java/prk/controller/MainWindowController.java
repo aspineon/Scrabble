@@ -1,6 +1,7 @@
 package prk.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import javafx.fxml.FXML;
@@ -108,6 +109,7 @@ public class MainWindowController {
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
 	}
+	
 
 	public void confirm() {
 		// message = this.isServer ? "Server: " : "Client: ";
@@ -115,8 +117,9 @@ public class MainWindowController {
 		String message = game.getBoard().getNewWordFromBoard(convertTextFieldToChar());
 		textarea.appendText(message + "\n");
 		try {
-			if (this.isServer)
+			if (this.isServer){
 				serverApp.getConnection().send(message);
+			}
 			else
 				clientApp.getConnection().send(message);
 		} catch (Exception e) {
@@ -161,6 +164,7 @@ public class MainWindowController {
 	public void checkLetter(KeyEvent event) {
 		TextFieldLimited textfield = (TextFieldLimited) event.getSource();
 		String letter = textfield.getText();
+		
 		if (letter != null) {
 			boolean letterIsOK = false;
 
@@ -240,4 +244,6 @@ public class MainWindowController {
 	public Label getLabelBag() {
 		return labelBag;
 	}
+
+	
 }

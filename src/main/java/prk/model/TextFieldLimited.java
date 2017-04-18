@@ -29,7 +29,7 @@ public class TextFieldLimited extends TextField {
 		if (getText().length() > limit) {
 			setText(getText().substring(0, limit));
 		}
-		if (!getText().matches("[a-zA-Z ]"))
+		if (!getText().matches("[a-zA-ZąĄćĆęĘłŁóÓńŃśŚżŻźŹ]"))
 			setText(null);
 
 	}
