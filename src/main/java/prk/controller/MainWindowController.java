@@ -163,17 +163,24 @@ public class MainWindowController {
 		String letter = textfield.getText();
 		if (letter != null) {
 			boolean letterIsOK = false;
-			for (int i = 0; i < 7; i++) {
-				if (isServer) {
+
+			// sprawdzanie czy mam literę i czy mogę jej użyć (czy nie jest już użyta)
+			if (isServer) {
+				for (int i = 0; i < player1.getLetters().length; i++) {
 					String s = String.valueOf(player1.getLetters()[i]);
-					if (s.equals(letter))
-						letterIsOK = true;
-				} else {
+					if (s.equals(letter)) {
+							letterIsOK = true;
+					}
+				}
+			} else {
+				for (int i = 0; i < player1.getLetters().length; i++) {
 					String s = String.valueOf(player2.getLetters()[i]);
-					if (s.equals(letter))
-						letterIsOK = true;
+					if (s.equals(letter)) {
+							letterIsOK = true;
+					}
 				}
 			}
+
 			if (letterIsOK == false) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Niedozwolona litera");
