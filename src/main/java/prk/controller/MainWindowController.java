@@ -18,7 +18,7 @@ import prk.model.ScrabblePlayer;
 import prk.model.TextFieldLimited;
 
 public class MainWindowController {
-
+//komentarz
 	private Stage primaryStage;
 	private ServerApp serverApp;
 	private ClientApp clientApp;
