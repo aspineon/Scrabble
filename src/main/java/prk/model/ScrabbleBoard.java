@@ -35,6 +35,8 @@ public class ScrabbleBoard {
 		
 		while (in.hasNext())
 			charCurrentBoard[in.nextInt()][in.nextInt()]=in.next().charAt(0);
+		
+		in.close();
 	}
 
 	

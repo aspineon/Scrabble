@@ -10,6 +10,10 @@ public class ScrabblePlayer {
 		this.points = 0;
 		this.letters = new char[7];
 	}
+	
+	public void setLetter(int index, char letter){
+		letters[index] = letter;
+	}
 
 	public boolean isMyTurn() {
 		return myTurn;
