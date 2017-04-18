@@ -43,10 +43,20 @@ public class Game {
 		player1.setMyTurn(true);
 		player2.setMyTurn(false);
 	}
-	
+
 	public void setPlayer2Turn() {
 		player1.setMyTurn(false);
 		player2.setMyTurn(true);
+	}
+
+	public void setAnotherPlayerTurn() {
+		if (player1.isMyTurn()) {
+			player1.setMyTurn(false);
+			player2.setMyTurn(true);
+		} else {
+			player1.setMyTurn(true);
+			player2.setMyTurn(false);
+		}
 	}
 
 	public ScrabblePlayer getPlayer1() {

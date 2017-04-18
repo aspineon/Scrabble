@@ -112,11 +112,25 @@ public class ClientApp extends Application {
 					game.setPlayer2Turn();
 					textarea.appendText("Zaczyna Gracz 2!" + "\n");
 				}
-
 			} else if (data.toString().matches("LEAVETURN .+")) {
 				String message = data.toString().substring(10);
 				textarea.appendText(message + "\n");
-				game.setPlayer2Turn();				
+				game.setPlayer2Turn();
+			} else if (data.toString().matches("NEWLETTERS \\D*")) {
+				textarea.appendText("Gracz 1 wymienił litery, kolej Gracza 2" + "\n");
+				bag.returnLetters(player1.getLetters());
+				String newLetters = data.toString().substring(11);
+				int numberOfNewLetters = newLetters.length() / 2;
+
+				int counter = 0;
+				for (int i = 0; i < numberOfNewLetters; i++) {
+					char c = newLetters.charAt(counter);
+					bag.findAndSubtract(c);
+					player1.getLetters()[i] = c;
+					counter = counter + 2;
+				}
+				labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
+				game.setPlayer2Turn();
 			} else {
 				textarea.appendText(data.toString() + "\n");
 				mainWindowController.addNewWordToBoard(data.toString());

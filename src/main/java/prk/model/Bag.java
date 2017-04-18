@@ -37,7 +37,18 @@ public class Bag {
 		if (numberOfLetters[i] > 0) {
 			numberOfLetters[i]--;
 			lettersLeft--;
-		} 
+		}
+	}
+
+	public void returnLetters(char[] returnLetters) {
+		for (char c : returnLetters) {
+			int i = 0;
+			while (!Character.valueOf(c).equals(letters[i])) {
+				i++;
+			}
+			numberOfLetters[i]++;
+			lettersLeft++;
+		}
 	}
 
 	public int[] getNumberOfLetters() {
