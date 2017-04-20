@@ -166,6 +166,22 @@ public class MainWindowController {
 			} else if (message.matches("LEAVETURN .+")) {
 				getTextarea().appendText(message.substring(10) + "\n");
 				getGame().setPlayer1Turn();
+				
+			} else if (message.matches("NEWLETTERS \\D*")) {
+				textarea.appendText("Gracz 2 wymienił litery, kolej Gracza 1" + "\n");
+				bag.returnLetters(player2.getLetters());
+				String newLetters = message.substring(11);
+				int numberOfNewLetters = newLetters.length() / 2;
+
+				int counter = 0;
+				for (int i = 0; i < numberOfNewLetters; i++) {
+					char c = newLetters.charAt(counter);
+					bag.findAndSubtract(c);
+					player2.getLetters()[i] = c;
+					counter = counter + 2;
+				}
+				labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
+				game.setPlayer1Turn();
 			} else {
 				getTextarea().appendText(message + "\n");
 				
@@ -213,14 +229,29 @@ public class MainWindowController {
 					textarea.appendText("Zaczyna Gracz 2!" + "\n");
 				}
 
-			} else if (message.matches("LEAVETURN .+")) {
-				textarea.appendText(message.substring(10) + "\n");
-				game.setPlayer2Turn();				
-			} else {
-				textarea.appendText(message + "\n");
+				} else if (message.matches("LEAVETURN .+")) {
+					textarea.appendText(message.substring(10) + "\n");
+					game.setPlayer2Turn();	
+				} else if (message.matches("NEWLETTERS \\D*")) {
+					textarea.appendText("Gracz 1 wymienił litery, kolej Gracza 2" + "\n");
+					bag.returnLetters(player1.getLetters());
+					String newLetters = message.substring(11);
+					int numberOfNewLetters = newLetters.length() / 2;
+
+					int counter = 0;
+					for (int i = 0; i < numberOfNewLetters; i++) {
+						char c = newLetters.charAt(counter);
+						bag.findAndSubtract(c);
+						player1.getLetters()[i] = c;
+						counter = counter + 2;
+					}
+					labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
+					game.setPlayer2Turn();
+				} else {
+					textarea.appendText(message + "\n");
 				
-				if (isWordValid(message))
-				addNewWordToBoard(message);
+					if (isWordValid(message))
+						addNewWordToBoard(message);
 			}
 		}
 	}
