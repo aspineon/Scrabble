@@ -2,15 +2,23 @@ package prk.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import prk.model.Bag;
 import prk.model.Game;
@@ -19,7 +27,7 @@ import prk.model.ScrabblePlayer;
 import prk.model.TextFieldLimited;
 
 public class MainWindowController {
-
+//komentarz
 	private Stage primaryStage;
 	private ServerApp serverApp;
 	private ClientApp clientApp;
@@ -126,6 +134,94 @@ public class MainWindowController {
 				clientApp.getConnection().send(message);
 		} catch (Exception e) {
 			textarea.appendText("Failed to send \n");
+		}
+	}
+	
+	public void getMessage(String message){
+		
+		if (isServer){
+			if (message.equals("Gracz 2 się połączył")) {
+				Platform.runLater(() -> {
+					getTextarea().appendText(message + "\n");
+				});
+				StringBuilder welcomeLetters = new StringBuilder();
+				welcomeLetters.append("WELCOMELETTERS ");
+				for (char c : getGame().getPlayer1().getLetters()) {
+					welcomeLetters.append(c).append(" ");
+				}
+				for (char c : getGame().getPlayer2().getLetters()) {
+					welcomeLetters.append(c).append(" ");
+				}
+				if (getGame().getPlayer1().isMyTurn()) {
+					welcomeLetters.append("1");
+				} else {
+					welcomeLetters.append("2");
+				}
+				try {
+					getServerApp().getConnection().send(welcomeLetters);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				getTextarea().appendText("Zaczyna " + getGame().getStartingPlayer() + "\n");
+			} else if (message.matches("LEAVETURN .+")) {
+				getTextarea().appendText(message.substring(10) + "\n");
+				getGame().setPlayer1Turn();
+			} else {
+				getTextarea().appendText(message + "\n");
+				
+				if (isWordValid(message))
+				addNewWordToBoard(message);
+			}	
+		} else{
+			if (message.matches("WELCOMELETTERS \\D* \\d*")) {
+				textarea.appendText("Gracz 1 się połączył" + "\n");
+				String player1Letters = message.substring(15, 28);
+				String player2Letters = message.substring(29, 42);
+
+				// wczytanie liter dla Playera 1 (serwera)
+				int counter = 0;
+				for (int i = 0; i < 7; i++) {
+					char c = player1Letters.charAt(counter);
+					game.getBag().findAndSubtract(c);
+					player1.getLetters()[i] = c;
+					counter = counter + 2;
+				}
+
+				// wczytanie liter dla Playera 2 {klienta}
+				counter = 0;
+				for (int i = 0; i < 7; i++) {
+					char c = player2Letters.charAt(counter);
+					game.getBag().findAndSubtract(c);
+					player2.getLetters()[i] = c;
+					counter = counter + 2;
+				}
+
+				// test czy dobrze się wczytały litery
+				StringBuilder letters = new StringBuilder();
+				for (char c : player2.getLetters()) {
+					letters.append(c).append(" ");
+				}
+				labelLetters.setText(letters.toString());
+				labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
+
+				// wczytanie informacji kto zaczyna grę
+				if (message.substring(43, 44).equals("1")) {
+					game.setPlayer1Turn();
+					textarea.appendText("Zaczyna Gracz 1!" + "\n");
+				} else {
+					game.setPlayer2Turn();
+					textarea.appendText("Zaczyna Gracz 2!" + "\n");
+				}
+
+			} else if (message.matches("LEAVETURN .+")) {
+				textarea.appendText(message.substring(10) + "\n");
+				game.setPlayer2Turn();				
+			} else {
+				textarea.appendText(message + "\n");
+				
+				if (isWordValid(message))
+				addNewWordToBoard(message);
+			}
 		}
 	}
 
@@ -277,6 +373,49 @@ public class MainWindowController {
 		while (in.hasNext()) {
 			textFieldBoard.get(in.nextInt()).get(in.nextInt()).setText(in.next());
 		}
+	}
+	
+	public boolean isWordValid(String message){
+		boolean answer = false;
+		final FutureTask query = new FutureTask(new Callable<Boolean>() {
+		
+			@Override
+			public Boolean call() throws Exception {
+				Boolean answer = new Boolean(false);
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Drugi gracz zaproponował nowe słowo");
+				alert.setHeaderText("Drugi gracz zaproponował nowe słowo. Sprawdz czy może je dodać.");
+				alert.setContentText("Nowe słowo to: " + game.decryptMessage(message));
+				//alert.initOwner(primaryStage);
+				alert.initModality(Modality.APPLICATION_MODAL);
+
+				ButtonType buttonConfirm = new ButtonType("Akceptuj");
+				ButtonType buttonReject = new ButtonType("Odrzuć");
+				ButtonType buttonCancel = new ButtonType("Anuluj", ButtonData.CANCEL_CLOSE);
+
+				alert.getButtonTypes().setAll(buttonConfirm, buttonReject, buttonCancel);
+
+				Optional<ButtonType> result = alert.showAndWait();
+						
+				if (result.get() == buttonConfirm){
+					return answer.TRUE;
+				} else if(result.get() == buttonReject){
+					return answer.FALSE;
+				} else {
+					return answer.FALSE;
+				}
+			}
+			
+		});
+	Platform.runLater(query);
+	try {
+		answer = (boolean) query.get();
+	} catch (InterruptedException e) {
+		e.printStackTrace();
+	} catch (ExecutionException e) {
+		e.printStackTrace();
+	};
+	return answer;
 	}
 
 	public void confirmConnection() throws Exception {
