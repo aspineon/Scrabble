@@ -2,16 +2,23 @@ package prk.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import prk.model.Game;
 import prk.model.ScrabbleBoard;
@@ -159,6 +166,8 @@ public class MainWindowController {
 				getGame().setPlayer1Turn();
 			} else {
 				getTextarea().appendText(message + "\n");
+				
+				if (isWordValid(message))
 				addNewWordToBoard(message);
 			}	
 		} else{
@@ -207,11 +216,11 @@ public class MainWindowController {
 				game.setPlayer2Turn();				
 			} else {
 				textarea.appendText(message + "\n");
+				
+				if (isWordValid(message))
 				addNewWordToBoard(message);
 			}
 		}
-		
-		
 	}
 
 	public void changeLetters() {
@@ -295,6 +304,49 @@ public class MainWindowController {
 		while (in.hasNext()) {
 			textFieldBoard.get(in.nextInt()).get(in.nextInt()).setText(in.next());
 		}
+	}
+	
+	public boolean isWordValid(String message){
+		boolean answer = false;
+		final FutureTask query = new FutureTask(new Callable<Boolean>() {
+		
+			@Override
+			public Boolean call() throws Exception {
+				Boolean answer = new Boolean(false);
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Drugi gracz zaproponował nowe słowo");
+				alert.setHeaderText("Drugi gracz zaproponował nowe słowo. Sprawdz czy może je dodać.");
+				alert.setContentText("Nowe słowo to: " + game.decryptMessage(message));
+				//alert.initOwner(primaryStage);
+				alert.initModality(Modality.APPLICATION_MODAL);
+
+				ButtonType buttonConfirm = new ButtonType("Akceptuj");
+				ButtonType buttonReject = new ButtonType("Odrzuć");
+				ButtonType buttonCancel = new ButtonType("Anuluj", ButtonData.CANCEL_CLOSE);
+
+				alert.getButtonTypes().setAll(buttonConfirm, buttonReject, buttonCancel);
+
+				Optional<ButtonType> result = alert.showAndWait();
+						
+				if (result.get() == buttonConfirm){
+					return answer.TRUE;
+				} else if(result.get() == buttonReject){
+					return answer.FALSE;
+				} else {
+					return answer.FALSE;
+				}
+			}
+			
+		});
+	Platform.runLater(query);
+	try {
+		answer = (boolean) query.get();
+	} catch (InterruptedException e) {
+		e.printStackTrace();
+	} catch (ExecutionException e) {
+		e.printStackTrace();
+	};
+	return answer;
 	}
 
 	public void confirmConnection() throws Exception {

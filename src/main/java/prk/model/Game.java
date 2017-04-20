@@ -1,6 +1,7 @@
 package prk.model;
 
 import java.util.Random;
+import java.util.Scanner;
 
 public class Game {
 	private ScrabblePlayer player1; // serwer
@@ -37,6 +38,18 @@ public class Game {
 			setPlayer2Turn();
 			startingPlayer = "Gracz 2!";
 		}
+	}
+	
+	public String decryptMessage(String message){
+		Scanner in = new Scanner(message).useDelimiter(",");
+		StringBuilder out = new StringBuilder();
+		while (in.hasNext()) {
+			in.nextInt();
+			in.nextInt();
+			out.append(in.next().charAt(0));
+		}
+		in.close();
+		return out.toString();
 	}
 
 	public void setPlayer1Turn() {
