@@ -38,5 +38,4 @@ public class ScrabblePlayer {
 	public void setLetters(char[] letters) {
 		this.letters = letters;
 	}
-
 }

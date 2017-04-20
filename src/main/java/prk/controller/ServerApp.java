@@ -6,8 +6,13 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import prk.model.Bag;
+import prk.model.Game;
+import prk.model.ScrabblePlayer;
 import prk.network.NetworkConnection;
 import prk.network.Server;
 

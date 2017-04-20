@@ -20,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import prk.model.Bag;
 import prk.model.Game;
 import prk.model.ScrabbleBoard;
 import prk.model.ScrabblePlayer;
@@ -35,6 +36,7 @@ public class MainWindowController {
 	private TextField text;
 	private ScrabblePlayer player1;
 	private ScrabblePlayer player2;
+	private Bag bag;
 
 	@FXML
 	private TextArea textarea;
@@ -100,6 +102,7 @@ public class MainWindowController {
 		game = new Game(true);
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
+		bag = game.getBag();
 		StringBuilder letters = new StringBuilder();
 		for (char c : game.getPlayer1().getLetters()) {
 			letters.append(c).append(" ");
@@ -116,8 +119,8 @@ public class MainWindowController {
 		game = new Game(false);
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
+		bag = game.getBag();
 	}
-	
 
 	public void confirm() {
 		// message = this.isServer ? "Server: " : "Client: ";
@@ -125,10 +128,9 @@ public class MainWindowController {
 		String message = game.getBoard().getNewWordFromBoard(convertTextFieldToChar());
 		textarea.appendText(message + "\n");
 		try {
-			if (this.isServer){
+			if (this.isServer) {
 				serverApp.getConnection().send(message);
-			}
-			else
+			} else
 				clientApp.getConnection().send(message);
 		} catch (Exception e) {
 			textarea.appendText("Failed to send \n");
@@ -224,7 +226,69 @@ public class MainWindowController {
 	}
 
 	public void changeLetters() {
+		// ustalenie kto nacisnął przycisk, aby nie powielać kodu
+		ScrabblePlayer currentPlayer;
+		if (this.isServer) {
+			currentPlayer = player1;
+		} else {
+			currentPlayer = player2;
+		}
 
+		if (currentPlayer.isMyTurn()) {
+			char[] random = null;
+			if (bag.getLettersLeft() == 0) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Worek jest pusty!");
+				alert.setHeaderText("Worek jest pusty!");
+				alert.showAndWait();
+			} else {
+				if (bag.getLettersLeft() > 6) {
+					random = new char[7];
+					random = bag.randomLetters(7);
+				} else {
+					random = new char[bag.getLettersLeft()];
+					random = bag.randomLetters(bag.getLettersLeft());
+				}
+				bag.returnLetters(currentPlayer.getLetters());
+				currentPlayer.setLetters(random);
+
+				// budowanie stringa do wysłania
+				StringBuilder newLetters = new StringBuilder();
+				newLetters.append("NEWLETTERS ");
+				for (char c : currentPlayer.getLetters()) {
+					newLetters.append(c).append(" ");
+				}
+
+				StringBuilder lettersForLabel = new StringBuilder();
+				for (char c : currentPlayer.getLetters()) {
+					lettersForLabel.append(c).append(" ");
+				}
+				labelLetters.setText(lettersForLabel.toString());
+
+				String message = null;
+				if (currentPlayer == player1) {
+					message = "Gracz 1 wymienił litery, kolej Gracza 2";
+					try {
+						serverApp.getConnection().send(newLetters);
+						textarea.appendText(message + "\n");
+					} catch (Exception e) {
+						textarea.appendText("Failed to send \n");
+					}
+				} else if (currentPlayer == player2) {
+					message = "Gracz 2 wymienił litery, kolej Gracza 1";
+					try {
+						clientApp.getConnection().send(newLetters);
+						textarea.appendText(message + "\n");
+					} catch (Exception e) {
+						textarea.appendText("Failed to send \n");
+					}
+				}
+				labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
+				game.setAnotherPlayerTurn();
+			}
+		} else {
+			textarea.appendText("Czekaj na swoją kolej! \n");
+		}
 	}
 
 	public void leaveTurn() {
@@ -260,20 +324,25 @@ public class MainWindowController {
 	public void checkLetter(KeyEvent event) {
 		TextFieldLimited textfield = (TextFieldLimited) event.getSource();
 		String letter = textfield.getText();
-		
+
 		if (letter != null) {
 			boolean letterIsOK = false;
-			for (int i = 0; i < 7; i++) {
-				if (isServer) {
+			if (isServer) {
+				for (int i = 0; i < player1.getLetters().length; i++) {
 					String s = String.valueOf(player1.getLetters()[i]);
-					if (s.equals(letter))
+					if (s.equals(letter)) {
 						letterIsOK = true;
-				} else {
+					}
+				}
+			} else {
+				for (int i = 0; i < player1.getLetters().length; i++) {
 					String s = String.valueOf(player2.getLetters()[i]);
-					if (s.equals(letter))
+					if (s.equals(letter)) {
 						letterIsOK = true;
+					}
 				}
 			}
+
 			if (letterIsOK == false) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Niedozwolona litera");
@@ -377,5 +446,4 @@ public class MainWindowController {
 		return labelBag;
 	}
 
-	
 }
