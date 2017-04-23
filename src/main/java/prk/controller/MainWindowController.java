@@ -247,14 +247,24 @@ public class MainWindowController {
 					}
 					labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
 					game.setPlayer2Turn();
+				} else if ((message.matches("REJECTWORD .+"))){
+					
+					textarea.appendText("Drugi gracz nie zgodził się na słow: " + game.decryptMessage(message) + "\n");
+					
+					
+					
 				} else {
 					textarea.appendText(message + "\n");
 				
-					if (isWordValid(message))
-						addNewWordToBoard(message);
+					if (isWordValid(message)) addNewWordToBoard(message);
+					else {
+						rejectNewWord(message);
+					}
 			}
 		}
 	}
+
+	
 
 	public void changeLetters() {
 		// ustalenie kto nacisnął przycisk, aby nie powielać kodu
@@ -404,6 +414,22 @@ public class MainWindowController {
 		while (in.hasNext()) {
 			textFieldBoard.get(in.nextInt()).get(in.nextInt()).setText(in.next());
 		}
+	}
+	
+	private void rejectNewWord(String message) {
+		
+		StringBuilder out = new StringBuilder();
+		out.append("REJECTWORD ").append(message);
+		
+		try {
+			if (this.isServer) {
+				serverApp.getConnection().send(out.toString());
+			} else
+				clientApp.getConnection().send(out.toString());
+		} catch (Exception e) {
+			textarea.appendText("Failed to send \n");
+		}
+		
 	}
 	
 	public boolean isWordValid(String message){

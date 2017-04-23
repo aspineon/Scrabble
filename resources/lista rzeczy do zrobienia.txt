@@ -1,0 +1,16 @@
+=========PIORYTET
+
+- obs³uga okienka potwierdzenia (ze s³owami które ju¿ s¹ na planszy) / kolorowanie nowych literek na planszy
+- obs³uga przycisku odrzuæ
+- punktacja (mno¿niki)
+- zakoñczenie gry
+- po poprawnym ruchu losowane s¹ nowe literki (i usuwanie z worka)
+- komentarz javadoc
+
+
+==========
+- Jednokrotne u¿ywanie dostêpnej literki
+- dostêpne pola na planszy
+- dŸwiêk zmiany tury
+- przerobienie tablicy char do String (w modelu)
+
