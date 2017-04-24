@@ -402,12 +402,12 @@ public class MainWindowController {
 		}
 	}
 
-	public char[][] convertTextFieldToChar() {
-		char[][] tempBoard = new char[15][15];
+	public String[][] convertTextFieldToChar() {
+		String[][] tempBoard = new String[15][15];
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
 				if (!textFieldBoard.get(i).get(j).getText().trim().isEmpty())
-					tempBoard[i][j] = textFieldBoard.get(i).get(j).getText().charAt(0);
+					tempBoard[i][j] = textFieldBoard.get(i).get(j).getText();
 			}
 		}
 		return tempBoard;

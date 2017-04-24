@@ -4,16 +4,16 @@ import java.util.Scanner;
 
 public class ScrabbleBoard {
 
-	private char[][] charCurrentBoard = new char[15][15];
+	private String[][] charCurrentBoard = new String[15][15];
 	
-	public String getNewWordFromBoard(char[][] newBoard){
+	public String getNewWordFromBoard(String[][] newBoard){
 		
-		char[][] tempBoard = newBoard;
+		String[][] tempBoard = newBoard;
 		
 		for(int i=0; i<15; i++){
 			for (int j = 0; j<15; j++){
 				if (tempBoard[i][j]==charCurrentBoard[i][j])
-				tempBoard[i][j] = '\u0000';
+				tempBoard[i][j] = "";
 				else charCurrentBoard[i][j] = tempBoard[i][j];
 			}
 		}
@@ -21,7 +21,7 @@ public class ScrabbleBoard {
 		StringBuilder out = new StringBuilder();
 		for (int i=0; i<15; i++){
 			for (int j = 0; j<15; j++){
-				if(tempBoard[i][j]!= '\u0000'){
+				if(tempBoard[i][j]!= ""){
 					out.append(i).append(",").append(j).append(",").append(tempBoard[i][j]).append(",");
 				}
 			}
@@ -34,17 +34,17 @@ public class ScrabbleBoard {
 		Scanner in = new Scanner(word).useDelimiter(",");
 		
 		while (in.hasNext())
-			charCurrentBoard[in.nextInt()][in.nextInt()]=in.next().charAt(0);
+			charCurrentBoard[in.nextInt()][in.nextInt()]=in.next();
 		
 		in.close();
 	}
 
 	
-	public char[][] getCharCurrentBoard() {
+	public String[][] getCharCurrentBoard() {
 		return charCurrentBoard;
 	}
 
-	public void setCharCurrentBoard(char[][] charCurrentBoard) {
+	public void setCharCurrentBoard(String[][] charCurrentBoard) {
 		this.charCurrentBoard = charCurrentBoard;
 	}
 	
