@@ -185,8 +185,13 @@ public class MainWindowController {
 			} else {
 				getTextarea().appendText(message + "\n");
 				
-				if (isWordValid(message))
 				addNewWordToBoard(message);
+				if (isWordValid(message)){
+					
+				} else {
+					removeNewWordFromBoard(message);
+					rejectNewWord(message);
+				}
 			}	
 		} else{
 			if (message.matches("WELCOMELETTERS \\D* \\d*")) {
@@ -255,9 +260,11 @@ public class MainWindowController {
 					
 				} else {
 					textarea.appendText(message + "\n");
-				
-					if (isWordValid(message)) addNewWordToBoard(message);
-					else {
+					addNewWordToBoard(message);
+					if (isWordValid(message)){
+						
+					} else {
+						removeNewWordFromBoard(message);
 						rejectNewWord(message);
 					}
 			}
@@ -416,6 +423,16 @@ public class MainWindowController {
 		}
 	}
 	
+	private void removeNewWordFromBoard(String message) {
+		game.getBoard().addNewWordToCharBoard(message);
+		Scanner in = new Scanner(message).useDelimiter(",");
+
+		while (in.hasNext()) {
+			textFieldBoard.get(in.nextInt()).get(in.nextInt()).setText("");
+			in.next();
+		}
+	}
+	
 	private void rejectNewWord(String message) {
 		
 		StringBuilder out = new StringBuilder();
@@ -434,6 +451,7 @@ public class MainWindowController {
 	
 	public boolean isWordValid(String message){
 		boolean answer = false;
+		colorNewWords(message);
 		final FutureTask query = new FutureTask(new Callable<Boolean>() {
 		
 			@Override
@@ -455,15 +473,22 @@ public class MainWindowController {
 				Optional<ButtonType> result = alert.showAndWait();
 						
 				if (result.get() == buttonConfirm){
+					decolorNewLetters(message);
 					return answer.TRUE;
 				} else if(result.get() == buttonReject){
+					decolorNewLetters(message);
+					//removeNewWordFromBoard(message);
 					return answer.FALSE;
 				} else {
+					decolorNewLetters(message);
 					return answer.FALSE;
 				}
 			}
+
+			
 			
 		});
+		
 	Platform.runLater(query);
 	try {
 		answer = (boolean) query.get();
@@ -473,6 +498,31 @@ public class MainWindowController {
 		e.printStackTrace();
 	};
 	return answer;
+	}
+
+	
+
+	private void colorNewWords(String message) {
+		Scanner in = new Scanner(message).useDelimiter(",");
+		StringBuilder out = new StringBuilder();
+		while (in.hasNext()) {
+			int x = in.nextInt();
+			int y = in.nextInt();
+			textFieldBoard.get(x).get(y).setStyle("-fx-control-inner-background: orange");
+			in.next();
+		}	
+	}
+	
+	private void decolorNewLetters(String message) {
+		Scanner in = new Scanner(message).useDelimiter(",");
+		StringBuilder out = new StringBuilder();
+		while (in.hasNext()) {
+			int x = in.nextInt();
+			int y = in.nextInt();
+			textFieldBoard.get(x).get(y).setStyle(null);
+			in.next();
+		}	
+		
 	}
 
 	public void confirmConnection() throws Exception {
