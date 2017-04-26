@@ -182,6 +182,10 @@ public class MainWindowController {
 				}
 				labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
 				game.setPlayer1Turn();
+			} else if ((message.matches("REJECTWORD,.+"))){
+				String modifiedMessage = message.replace("REJECTWORD,", "");
+				textarea.appendText("Drugi gracz nie zgodził się na słow: " + game.decryptMessage(modifiedMessage) + "\n");
+				removeNewWordFromBoard(modifiedMessage);
 			} else {
 				getTextarea().appendText(message + "\n");
 				
@@ -252,12 +256,10 @@ public class MainWindowController {
 					}
 					labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
 					game.setPlayer2Turn();
-				} else if ((message.matches("REJECTWORD .+"))){
-					
-					textarea.appendText("Drugi gracz nie zgodził się na słow: " + game.decryptMessage(message) + "\n");
-					
-					
-					
+				} else if ((message.matches("REJECTWORD,.+"))){
+					String modifiedMessage = message.replace("REJECTWORD,", "");
+					textarea.appendText("Drugi gracz nie zgodził się na słow: " + game.decryptMessage(modifiedMessage) + "\n");
+					removeNewWordFromBoard(modifiedMessage);
 				} else {
 					textarea.appendText(message + "\n");
 					addNewWordToBoard(message);
@@ -437,7 +439,7 @@ public class MainWindowController {
 	private void rejectNewWord(String message) {
 		
 		StringBuilder out = new StringBuilder();
-		out.append("REJECTWORD ").append(message);
+		out.append("REJECTWORD,").append(message);
 		
 		try {
 			if (this.isServer) {

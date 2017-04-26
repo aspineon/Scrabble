@@ -22,7 +22,6 @@ public class ScrabbleBoard {
 			for (int j = 0; j<15; j++){
 				if (tempBoard[i][j].equals((stringCurrentBoard[i][j]))){
 					tempBoard[i][j] = "Q";
-					System.out.println(tempBoard[i][j]);	
 				} else stringCurrentBoard[i][j] = tempBoard[i][j];
 			}
 		}
