@@ -125,7 +125,7 @@ public class MainWindowController {
 	public void confirm() {
 		// message = this.isServer ? "Server: " : "Client: ";
 		// message += "confirmPressed";
-		String message = game.getBoard().getNewWordFromBoard(convertTextFieldToChar());
+		String message = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
 		textarea.appendText(message + "\n");
 		try {
 			if (this.isServer) {
@@ -402,12 +402,13 @@ public class MainWindowController {
 		}
 	}
 
-	public String[][] convertTextFieldToChar() {
+	public String[][] convertTextFieldToString() {
 		String[][] tempBoard = new String[15][15];
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
 				if (!textFieldBoard.get(i).get(j).getText().trim().isEmpty())
 					tempBoard[i][j] = textFieldBoard.get(i).get(j).getText();
+				else tempBoard[i][j] = "Q";
 			}
 		}
 		return tempBoard;

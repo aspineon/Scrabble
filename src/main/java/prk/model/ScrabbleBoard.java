@@ -4,24 +4,33 @@ import java.util.Scanner;
 
 public class ScrabbleBoard {
 
-	private String[][] charCurrentBoard = new String[15][15];
+	private String[][] stringCurrentBoard = new String[15][15];
 	
+	public ScrabbleBoard(){
+		
+		for(int i=0; i<15; i++){
+			for (int j = 0; j<15; j++){
+				stringCurrentBoard[i][j] = "Q";
+			}
+		}
+	}
 	public String getNewWordFromBoard(String[][] newBoard){
 		
 		String[][] tempBoard = newBoard;
 		
 		for(int i=0; i<15; i++){
 			for (int j = 0; j<15; j++){
-				if (tempBoard[i][j]==charCurrentBoard[i][j])
-				tempBoard[i][j] = "";
-				else charCurrentBoard[i][j] = tempBoard[i][j];
+				if (tempBoard[i][j].equals((stringCurrentBoard[i][j]))){
+					tempBoard[i][j] = "Q";
+					System.out.println(tempBoard[i][j]);	
+				} else stringCurrentBoard[i][j] = tempBoard[i][j];
 			}
 		}
 		
 		StringBuilder out = new StringBuilder();
 		for (int i=0; i<15; i++){
 			for (int j = 0; j<15; j++){
-				if(tempBoard[i][j]!= ""){
+				if(!tempBoard[i][j].equals("Q")){
 					out.append(i).append(",").append(j).append(",").append(tempBoard[i][j]).append(",");
 				}
 			}
@@ -34,18 +43,18 @@ public class ScrabbleBoard {
 		Scanner in = new Scanner(word).useDelimiter(",");
 		
 		while (in.hasNext())
-			charCurrentBoard[in.nextInt()][in.nextInt()]=in.next();
+			stringCurrentBoard[in.nextInt()][in.nextInt()]=in.next();
 		
 		in.close();
 	}
 
 	
 	public String[][] getCharCurrentBoard() {
-		return charCurrentBoard;
+		return stringCurrentBoard;
 	}
 
 	public void setCharCurrentBoard(String[][] charCurrentBoard) {
-		this.charCurrentBoard = charCurrentBoard;
+		this.stringCurrentBoard = charCurrentBoard;
 	}
 	
 }
