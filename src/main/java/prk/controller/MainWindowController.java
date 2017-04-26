@@ -103,6 +103,7 @@ public class MainWindowController {
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
 		bag = game.getBag();
+		
 		StringBuilder letters = new StringBuilder();
 		for (char c : game.getPlayer1().getLetters()) {
 			letters.append(c).append(" ");
@@ -120,20 +121,31 @@ public class MainWindowController {
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
 		bag = game.getBag();
+		
 	}
 
 	public void confirm() {
-		// message = this.isServer ? "Server: " : "Client: ";
-		// message += "confirmPressed";
-		String message = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
-		textarea.appendText(message + "\n");
-		try {
-			if (this.isServer) {
-				serverApp.getConnection().send(message);
-			} else
-				clientApp.getConnection().send(message);
-		} catch (Exception e) {
-			textarea.appendText("Failed to send \n");
+		
+		ScrabblePlayer currentPlayer;
+		if (this.isServer) {
+			currentPlayer = player1;
+		} else {
+			currentPlayer = player2;
+		}
+		
+		if (currentPlayer.isMyTurn()){
+			String message = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
+			textarea.appendText(message + "\n");
+			try {
+				if (this.isServer) {
+					serverApp.getConnection().send(message);
+				} else
+					clientApp.getConnection().send(message);
+			} catch (Exception e) {
+				textarea.appendText("Failed to send \n");
+			}	
+		}else {
+			textarea.appendText("Czekaj na swoją kolej! \n");
 		}
 	}
 	
@@ -273,8 +285,6 @@ public class MainWindowController {
 		}
 	}
 
-	
-
 	public void changeLetters() {
 		// ustalenie kto nacisnął przycisk, aby nie powielać kodu
 		ScrabblePlayer currentPlayer;
@@ -410,7 +420,7 @@ public class MainWindowController {
 			for (int j = 0; j < 15; j++) {
 				if (!textFieldBoard.get(i).get(j).getText().trim().isEmpty())
 					tempBoard[i][j] = textFieldBoard.get(i).get(j).getText();
-				else tempBoard[i][j] = "Q";
+				else tempBoard[i][j] = "";
 			}
 		}
 		return tempBoard;
@@ -463,7 +473,7 @@ public class MainWindowController {
 				Alert alert = new Alert(AlertType.CONFIRMATION);
 				alert.setTitle("Drugi gracz zaproponował nowe słowo");
 				alert.setHeaderText("Drugi gracz zaproponował nowe słowo. Sprawdz czy może je dodać.");
-				alert.setContentText("Nowe słowo to: " + game.decryptMessage(message));
+				alert.setContentText("Nowe słowo znajdziesz na planszy");
 				//alert.initOwner(primaryStage);
 				alert.initModality(Modality.APPLICATION_MODAL);
 
@@ -503,8 +513,6 @@ public class MainWindowController {
 	return answer;
 	}
 
-	
-
 	private void colorNewWords(String message) {
 		Scanner in = new Scanner(message).useDelimiter(",");
 		StringBuilder out = new StringBuilder();
@@ -526,6 +534,22 @@ public class MainWindowController {
 			in.next();
 		}	
 		
+	}
+	
+	public void disableTextFields(){
+		for(int i=0; i<15; i++){
+			for (int j = 0; j<15; j++){
+				textFieldBoard.get(j).get(i).setEditable(false);
+			}
+		}
+	}
+	
+	public void enableTextFields(){
+		for(int i=0; i<15; i++){
+			for (int j = 0; j<15; j++){
+				textFieldBoard.get(j).get(i).setEditable(true);
+			}
+		}
 	}
 
 	public void confirmConnection() throws Exception {

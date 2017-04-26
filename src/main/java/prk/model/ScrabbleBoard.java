@@ -10,7 +10,7 @@ public class ScrabbleBoard {
 		
 		for(int i=0; i<15; i++){
 			for (int j = 0; j<15; j++){
-				stringCurrentBoard[i][j] = "Q";
+				stringCurrentBoard[i][j] = "";
 			}
 		}
 	}
@@ -21,7 +21,7 @@ public class ScrabbleBoard {
 		for(int i=0; i<15; i++){
 			for (int j = 0; j<15; j++){
 				if (tempBoard[i][j].equals((stringCurrentBoard[i][j]))){
-					tempBoard[i][j] = "Q";
+					tempBoard[i][j] = "";
 				} else stringCurrentBoard[i][j] = tempBoard[i][j];
 			}
 		}
@@ -29,7 +29,7 @@ public class ScrabbleBoard {
 		StringBuilder out = new StringBuilder();
 		for (int i=0; i<15; i++){
 			for (int j = 0; j<15; j++){
-				if(!tempBoard[i][j].equals("Q")){
+				if(!tempBoard[i][j].equals("")){
 					out.append(i).append(",").append(j).append(",").append(tempBoard[i][j]).append(",");
 				}
 			}
