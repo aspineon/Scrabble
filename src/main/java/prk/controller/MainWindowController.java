@@ -399,33 +399,50 @@ public class MainWindowController {
 		TextFieldLimited textfield = (TextFieldLimited) event.getSource();
 		String letter = textfield.getText();
 
-		if (letter != null) {
-			boolean letterIsOK = false;
-			if (isServer) {
-				for (int i = 0; i < player1.getLetters().length; i++) {
-					String s = String.valueOf(player1.getLetters()[i]);
-					if (s.equals(letter)) {
-						letterIsOK = true;
-					}
-				}
-			} else {
-				for (int i = 0; i < player1.getLetters().length; i++) {
-					String s = String.valueOf(player2.getLetters()[i]);
-					if (s.equals(letter)) {
-						letterIsOK = true;
-					}
-				}
-			}
-
-			if (letterIsOK == false) {
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Niedozwolona litera");
-				alert.setHeaderText("Niedozwolona litera");
-				alert.setContentText("Nie posiadasz literki: " + letter);
-				alert.showAndWait();
-				textfield.setText("");
-			}
+		ScrabblePlayer currentPlayer;
+		if (this.isServer) {
+			currentPlayer = player1;
+		} else {
+			currentPlayer = player2;
 		}
+		
+		if(currentPlayer.isMyTurn()){
+			if (letter != null) {
+				boolean letterIsOK = false;
+				if (isServer) {
+					for (int i = 0; i < player1.getLetters().length; i++) {
+						String s = String.valueOf(player1.getLetters()[i]);
+						if (s.equals(letter)) {
+							letterIsOK = true;
+						}
+					}
+				} else {
+					for (int i = 0; i < player1.getLetters().length; i++) {
+						String s = String.valueOf(player2.getLetters()[i]);
+						if (s.equals(letter)) {
+							letterIsOK = true;
+						}
+					}
+				}
+
+				if (letterIsOK == false) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Niedozwolona litera");
+					alert.setHeaderText("Niedozwolona litera");
+					alert.setContentText("Nie posiadasz literki: " + letter);
+					alert.showAndWait();
+					textfield.setText("");
+				}
+			}
+		} else {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("To nie twoja kolej");
+			alert.setHeaderText("Teraz przeciwnik wykonuje swój ruch");
+			alert.setContentText("Poczekaj aż drugi gracz skończy swoją turę");
+			alert.showAndWait();
+			textfield.setText("");
+		}
+		
 	}
 
 	public String[][] convertTextFieldToString() {
