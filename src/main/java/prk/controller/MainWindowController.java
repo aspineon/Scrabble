@@ -136,6 +136,8 @@ public class MainWindowController {
 		if (currentPlayer.isMyTurn()){
 			String message = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
 			textarea.appendText(message + "\n");
+			disableTextFields();
+			game.setAnotherPlayerTurn();
 			try {
 				if (this.isServer) {
 					serverApp.getConnection().send(message);
@@ -147,6 +149,7 @@ public class MainWindowController {
 		}else {
 			textarea.appendText("Czekaj na swoją kolej! \n");
 		}
+		
 	}
 	
 	public void getMessage(String message){
@@ -168,6 +171,7 @@ public class MainWindowController {
 					welcomeLetters.append("1");
 				} else {
 					welcomeLetters.append("2");
+					disableTextFields();
 				}
 				try {
 					getServerApp().getConnection().send(welcomeLetters);
@@ -178,9 +182,10 @@ public class MainWindowController {
 			} else if (message.matches("LEAVETURN .+")) {
 				getTextarea().appendText(message.substring(10) + "\n");
 				getGame().setPlayer1Turn();
-				
+				enableTextFields();
 			} else if (message.matches("NEWLETTERS \\D*")) {
 				textarea.appendText("Gracz 2 wymienił litery, kolej Gracza 1" + "\n");
+				enableTextFields();
 				bag.returnLetters(player2.getLetters());
 				String newLetters = message.substring(11);
 				int numberOfNewLetters = newLetters.length() / 2;
@@ -198,12 +203,14 @@ public class MainWindowController {
 				String modifiedMessage = message.replace("REJECTWORD,", "");
 				textarea.appendText("Drugi gracz nie zgodził się na słow: " + game.decryptMessage(modifiedMessage) + "\n");
 				removeNewWordFromBoard(modifiedMessage);
+				getGame().setPlayer1Turn();
+				enableTextFields();
 			} else {
 				getTextarea().appendText(message + "\n");
-				
 				addNewWordToBoard(message);
 				if (isWordValid(message)){
-					
+					enableTextFields();
+					getGame().setPlayer1Turn();
 				} else {
 					removeNewWordFromBoard(message);
 					rejectNewWord(message);
@@ -245,6 +252,7 @@ public class MainWindowController {
 				if (message.substring(43, 44).equals("1")) {
 					game.setPlayer1Turn();
 					textarea.appendText("Zaczyna Gracz 1!" + "\n");
+					disableTextFields();
 				} else {
 					game.setPlayer2Turn();
 					textarea.appendText("Zaczyna Gracz 2!" + "\n");
@@ -252,9 +260,11 @@ public class MainWindowController {
 
 				} else if (message.matches("LEAVETURN .+")) {
 					textarea.appendText(message.substring(10) + "\n");
-					game.setPlayer2Turn();	
+					game.setPlayer2Turn();
+					enableTextFields();
 				} else if (message.matches("NEWLETTERS \\D*")) {
 					textarea.appendText("Gracz 1 wymienił litery, kolej Gracza 2" + "\n");
+					enableTextFields();
 					bag.returnLetters(player1.getLetters());
 					String newLetters = message.substring(11);
 					int numberOfNewLetters = newLetters.length() / 2;
@@ -272,11 +282,13 @@ public class MainWindowController {
 					String modifiedMessage = message.replace("REJECTWORD,", "");
 					textarea.appendText("Drugi gracz nie zgodził się na słow: " + game.decryptMessage(modifiedMessage) + "\n");
 					removeNewWordFromBoard(modifiedMessage);
+					enableTextFields();
 				} else {
 					textarea.appendText(message + "\n");
 					addNewWordToBoard(message);
 					if (isWordValid(message)){
-						
+						enableTextFields();
+						game.setPlayer2Turn();
 					} else {
 						removeNewWordFromBoard(message);
 						rejectNewWord(message);
@@ -349,6 +361,7 @@ public class MainWindowController {
 		} else {
 			textarea.appendText("Czekaj na swoją kolej! \n");
 		}
+		disableTextFields();
 	}
 
 	public void leaveTurn() {
@@ -379,6 +392,7 @@ public class MainWindowController {
 				textarea.appendText("Czekaj na swoją kolej! \n");
 			}
 		}
+		disableTextFields();
 	}
 
 	public void checkLetter(KeyEvent event) {
@@ -459,7 +473,7 @@ public class MainWindowController {
 		} catch (Exception e) {
 			textarea.appendText("Failed to send \n");
 		}
-		
+		disableTextFields();
 	}
 	
 	public boolean isWordValid(String message){
