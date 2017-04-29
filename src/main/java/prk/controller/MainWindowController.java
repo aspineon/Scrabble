@@ -46,7 +46,7 @@ public class MainWindowController {
 	@FXML
 	private ArrayList<ArrayList<TextFieldLimited>> textFieldBoard;
 
-	char[][] tempBoard = new char[15][15];
+	String[][] tempBoard = new String[15][15];
 
 	@FXML
 	private TextFieldLimited txt00_00, txt00_01, txt00_02, txt00_03, txt00_04, txt00_05, txt00_06, txt00_07, txt00_08,
@@ -105,7 +105,7 @@ public class MainWindowController {
 		bag = game.getBag();
 		
 		StringBuilder letters = new StringBuilder();
-		for (char c : game.getPlayer1().getLetters()) {
+		for (String c : game.getPlayer1().getLetters()) {
 			letters.append(c).append(" ");
 		}
 		labelLetters.setText(letters.toString());
@@ -161,10 +161,10 @@ public class MainWindowController {
 				});
 				StringBuilder welcomeLetters = new StringBuilder();
 				welcomeLetters.append("WELCOMELETTERS ");
-				for (char c : getGame().getPlayer1().getLetters()) {
+				for (String c : getGame().getPlayer1().getLetters()) {
 					welcomeLetters.append(c).append(" ");
 				}
-				for (char c : getGame().getPlayer2().getLetters()) {
+				for (String c : getGame().getPlayer2().getLetters()) {
 					welcomeLetters.append(c).append(" ");
 				}
 				if (getGame().getPlayer1().isMyTurn()) {
@@ -192,7 +192,7 @@ public class MainWindowController {
 
 				int counter = 0;
 				for (int i = 0; i < numberOfNewLetters; i++) {
-					char c = newLetters.charAt(counter);
+					String c = String.valueOf(newLetters.charAt(counter));
 					bag.findAndSubtract(c);
 					player2.getLetters()[i] = c;
 					counter = counter + 2;
@@ -201,7 +201,7 @@ public class MainWindowController {
 				game.setPlayer1Turn();
 			} else if ((message.matches("REJECTWORD,.+"))){
 				String modifiedMessage = message.replace("REJECTWORD,", "");
-				textarea.appendText("Drugi gracz nie zgodził się na słow: " + game.decryptMessage(modifiedMessage) + "\n");
+				textarea.appendText("Drugi gracz nie zgodził się na słowo: " + game.decryptMessage(modifiedMessage) + "\n");
 				removeNewWordFromBoard(modifiedMessage);
 				getGame().setPlayer1Turn();
 				enableTextFields();
@@ -225,7 +225,7 @@ public class MainWindowController {
 				// wczytanie liter dla Playera 1 (serwera)
 				int counter = 0;
 				for (int i = 0; i < 7; i++) {
-					char c = player1Letters.charAt(counter);
+					String c = String.valueOf(player1Letters.charAt(counter));
 					game.getBag().findAndSubtract(c);
 					player1.getLetters()[i] = c;
 					counter = counter + 2;
@@ -234,7 +234,7 @@ public class MainWindowController {
 				// wczytanie liter dla Playera 2 {klienta}
 				counter = 0;
 				for (int i = 0; i < 7; i++) {
-					char c = player2Letters.charAt(counter);
+					String c = String.valueOf(player2Letters.charAt(counter));
 					game.getBag().findAndSubtract(c);
 					player2.getLetters()[i] = c;
 					counter = counter + 2;
@@ -242,7 +242,7 @@ public class MainWindowController {
 
 				// test czy dobrze się wczytały litery
 				StringBuilder letters = new StringBuilder();
-				for (char c : player2.getLetters()) {
+				for (String c : player2.getLetters()) {
 					letters.append(c).append(" ");
 				}
 				labelLetters.setText(letters.toString());
@@ -271,7 +271,7 @@ public class MainWindowController {
 
 					int counter = 0;
 					for (int i = 0; i < numberOfNewLetters; i++) {
-						char c = newLetters.charAt(counter);
+						String c = String.valueOf(newLetters.charAt(counter));
 						bag.findAndSubtract(c);
 						player1.getLetters()[i] = c;
 						counter = counter + 2;
@@ -307,7 +307,7 @@ public class MainWindowController {
 		}
 
 		if (currentPlayer.isMyTurn()) {
-			char[] random = null;
+			String[] random = null;
 			if (bag.getLettersLeft() == 0) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Worek jest pusty!");
@@ -315,10 +315,10 @@ public class MainWindowController {
 				alert.showAndWait();
 			} else {
 				if (bag.getLettersLeft() > 6) {
-					random = new char[7];
+					random = new String[7];
 					random = bag.randomLetters(7);
 				} else {
-					random = new char[bag.getLettersLeft()];
+					random = new String[bag.getLettersLeft()];
 					random = bag.randomLetters(bag.getLettersLeft());
 				}
 				bag.returnLetters(currentPlayer.getLetters());
@@ -327,12 +327,12 @@ public class MainWindowController {
 				// budowanie stringa do wysłania
 				StringBuilder newLetters = new StringBuilder();
 				newLetters.append("NEWLETTERS ");
-				for (char c : currentPlayer.getLetters()) {
+				for (String c : currentPlayer.getLetters()) {
 					newLetters.append(c).append(" ");
 				}
 
 				StringBuilder lettersForLabel = new StringBuilder();
-				for (char c : currentPlayer.getLetters()) {
+				for (String c : currentPlayer.getLetters()) {
 					lettersForLabel.append(c).append(" ");
 				}
 				labelLetters.setText(lettersForLabel.toString());
@@ -459,7 +459,7 @@ public class MainWindowController {
 
 	public void addNewWordToBoard(String message) {
 
-		game.getBoard().addNewWordToCharBoard(message);
+		game.getBoard().addNewWordToStringBoard(message);
 		Scanner in = new Scanner(message).useDelimiter(",");
 
 		while (in.hasNext()) {
@@ -468,7 +468,7 @@ public class MainWindowController {
 	}
 	
 	private void removeNewWordFromBoard(String message) {
-		game.getBoard().addNewWordToCharBoard(message);
+		game.getBoard().addNewWordToStringBoard(message);
 		Scanner in = new Scanner(message).useDelimiter(",");
 
 		while (in.hasNext()) {

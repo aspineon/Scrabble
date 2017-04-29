@@ -38,12 +38,11 @@ public class ScrabbleBoard {
 		return out.toString();
 	}
 	
-	public void addNewWordToCharBoard(String word){
+	public void addNewWordToStringBoard(String word){
 		Scanner in = new Scanner(word).useDelimiter(",");
 		
 		while (in.hasNext())
 			stringCurrentBoard[in.nextInt()][in.nextInt()]=in.next();
-		
 		in.close();
 	}
 

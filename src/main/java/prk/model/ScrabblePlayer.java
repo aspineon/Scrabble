@@ -3,15 +3,15 @@ package prk.model;
 public class ScrabblePlayer {
 	private boolean myTurn;
 	private int points;
-	private char[] letters;
+	private String[] letters;
 
 	public ScrabblePlayer() {
 		this.myTurn = false;
 		this.points = 0;
-		this.letters = new char[7];
+		this.letters = new String[7];
 	}
 	
-	public void setLetter(int index, char letter){
+	public void setLetter(int index, String letter){
 		letters[index] = letter;
 	}
 
@@ -31,11 +31,11 @@ public class ScrabblePlayer {
 		this.points = points;
 	}
 
-	public char[] getLetters() {
+	public String[] getLetters() {
 		return letters;
 	}
 
-	public void setLetters(char[] letters) {
+	public void setLetters(String[] letters) {
 		this.letters = letters;
 	}
 }

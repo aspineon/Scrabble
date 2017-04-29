@@ -19,7 +19,7 @@ public class Game {
 		// losowanie literek tylko po stronie serwera i serwer wyśle literki dla
 		// clienta
 		if (isServer) {
-			char[] random = new char[7];
+			String[] random = new String[7];
 			random = bag.randomLetters(7);
 			player1.setLetters(random);
 			random = bag.randomLetters(7);
