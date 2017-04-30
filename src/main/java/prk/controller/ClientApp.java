@@ -40,6 +40,7 @@ public class ClientApp extends Application {
 		primaryStage.setMinHeight(560);
 		primaryStage.setMinWidth(800);
 		primaryStage.setScene(scene);
+		primaryStage.setTitle("Scrabble: Gracz 2");
 		primaryStage.show();
 	}
 

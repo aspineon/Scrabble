@@ -136,6 +136,7 @@ public class MainWindowController {
 		if (currentPlayer.isMyTurn()){
 			String message = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
 			textarea.appendText(message + "\n");
+			message = "NEWWORD " + message;
 			disableTextFields();
 			game.setAnotherPlayerTurn();
 			try {
@@ -205,15 +206,16 @@ public class MainWindowController {
 				removeNewWordFromBoard(modifiedMessage);
 				getGame().setPlayer1Turn();
 				enableTextFields();
-			} else {
-				getTextarea().appendText(message + "\n");
-				addNewWordToBoard(message);
-				if (isWordValid(message)){
+			} else if (message.matches("NEWWORD .+")){
+				String newWord = message.substring(8); //utnij newword i wez same wspolrzedne
+				getTextarea().appendText(newWord + "\n");
+				addNewWordToBoard(newWord);
+				if (isWordValid(newWord)){
 					enableTextFields();
 					getGame().setPlayer1Turn();
 				} else {
-					removeNewWordFromBoard(message);
-					rejectNewWord(message);
+					removeNewWordFromBoard(newWord);
+					rejectNewWord(newWord);
 				}
 			}	
 		} else{
@@ -283,15 +285,16 @@ public class MainWindowController {
 					textarea.appendText("Drugi gracz nie zgodził się na słow: " + game.decryptMessage(modifiedMessage) + "\n");
 					removeNewWordFromBoard(modifiedMessage);
 					enableTextFields();
-				} else {
-					textarea.appendText(message + "\n");
-					addNewWordToBoard(message);
-					if (isWordValid(message)){
+				} else if (message.matches("NEWWORD .+")){
+					String newWord = message.substring(8); //utnij newword i wez same wspolrzedne
+					textarea.appendText(newWord + "\n");
+					addNewWordToBoard(newWord);
+					if (isWordValid(newWord)){
 						enableTextFields();
 						game.setPlayer2Turn();
 					} else {
-						removeNewWordFromBoard(message);
-						rejectNewWord(message);
+						removeNewWordFromBoard(newWord);
+						rejectNewWord(newWord);
 					}
 			}
 		}

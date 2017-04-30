@@ -39,6 +39,7 @@ public class ServerApp extends Application {
 		primaryStage.setMinHeight(560);
 		primaryStage.setMinWidth(800);
 		primaryStage.setScene(scene);
+		primaryStage.setTitle("Scrabble: Gracz 1");
 		primaryStage.show();
 	}
 
