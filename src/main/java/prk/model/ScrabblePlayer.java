@@ -1,5 +1,7 @@
 package prk.model;
 
+import java.util.ArrayList;
+
 public class ScrabblePlayer {
 	private boolean myTurn;
 	private int points;
@@ -37,5 +39,15 @@ public class ScrabblePlayer {
 
 	public void setLetters(String[] letters) {
 		this.letters = letters;
+	}
+	
+	public String getLabelLetters(){
+		StringBuilder labelLetters = new StringBuilder();
+		for (int i =0; i<letters.length; i++){
+			if (!letters[i].equals("")){
+				labelLetters.append(letters[i] + " ");
+			} else ;
+		}
+		return labelLetters.toString();
 	}
 }
