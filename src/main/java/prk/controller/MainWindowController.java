@@ -17,6 +17,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,7 +28,7 @@ import prk.model.ScrabblePlayer;
 import prk.model.TextFieldLimited;
 
 public class MainWindowController {
-	// komentarz
+//komentarz
 	private Stage primaryStage;
 	private ServerApp serverApp;
 	private ClientApp clientApp;
@@ -103,7 +104,7 @@ public class MainWindowController {
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
 		bag = game.getBag();
-
+		
 		StringBuilder letters = new StringBuilder();
 		for (String c : game.getPlayer1().getLetters()) {
 			letters.append(c).append(" ");
@@ -121,7 +122,7 @@ public class MainWindowController {
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
 		bag = game.getBag();
-
+		
 	}
 
 	public void confirm() {
@@ -151,8 +152,8 @@ public class MainWindowController {
 			textarea.appendText("Czekaj na swoją kolej! \n");
 		}
 
-	}
-
+}
+	
 	public void getMessage(String message) {
 
 		if (isServer) {
@@ -249,6 +250,7 @@ public class MainWindowController {
 
 	public void getPointsAction(String message, boolean isServer) {
 		String points = message.substring(7);
+		disableTextFields();
 		if (isServer) {
 			player1.setPoints(player1.getPoints() + Integer.valueOf(points));
 			Platform.runLater(()->{labelPlayer1Points.setText(String.valueOf(player1.getPoints()) + " puntków");});
@@ -259,8 +261,7 @@ public class MainWindowController {
 	} 
 
 	public void newWordAction(String message, boolean isServer) {
-		String newWord = message.substring(8); // utnij newword i wez same
-												// wspolrzedne
+		String newWord = message.substring(8); // utnij newword i wez same wspolrzedne
 		textarea.appendText(newWord + "\n");
 		addNewWordToBoard(newWord);
 		if (isWordValid(newWord)) {
@@ -309,13 +310,7 @@ public class MainWindowController {
 					textarea.appendText("Failed to send \n");
 				}
 			}
-
-
-			// oblicz sume punktow
-			// dodaj punkty do gracza
-			// wylosuj nowe litery
-
-			disableTextFields();
+			enableTextFields();
 			game.setAnotherPlayerTurn();
 		} else {
 			removeNewWordFromBoard(newWord);
@@ -364,7 +359,7 @@ public class MainWindowController {
 		textarea.appendText(message.substring(10) + "\n");
 		enableTextFields();
 		game.setAnotherPlayerTurn();
-	}
+}
 
 	public void changeLetters() {
 		// ustalenie kto nacisnął przycisk, aby nie powielać kodu
@@ -465,53 +460,80 @@ public class MainWindowController {
 	}
 
 	public void checkLetter(KeyEvent event) {
-		TextFieldLimited textfield = (TextFieldLimited) event.getSource();
-		String letter = textfield.getText();
+		if (!event.isAltDown()){
+			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
+			String letter = textfield.getText();
+			ScrabblePlayer currentPlayer;
+			if (this.isServer) {
+				currentPlayer = player1;
+			} else {
+				currentPlayer = player2;
+			}
+			
+			if(currentPlayer.isMyTurn()){
+				if (letter != null) {
+					boolean letterIsOK = false;
+					if (isServer) {
+						for (int i = 0; i < player1.getLetters().length; i++) {
+							String s = player1.getLetters()[i];
+							if (s.equals(letter) || letter.equals("")) {
+								letterIsOK = true;
+								player1.setLetter(i, "");
+							}
+						}
+					} else {
+						for (int i = 0; i < player2.getLetters().length; i++) {
+							String s = player2.getLetters()[i];
+							if (s.equals(letter) || letter.equals("")) {
+								letterIsOK = true;
+								player2.setLetter(i, "");
+							}
+						}
+					}
 
-		ScrabblePlayer currentPlayer;
-		if (this.isServer) {
-			currentPlayer = player1;
-		} else {
-			currentPlayer = player2;
-		}
-
-		if (currentPlayer.isMyTurn()) {
-			if (letter != null) {
-				boolean letterIsOK = false;
-				if (isServer) {
+					if (letterIsOK == false) {
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Niedozwolona litera");
+						alert.setHeaderText("Niedozwolona litera");
+						alert.setContentText("Nie posiadasz literki: " + letter);
+						alert.showAndWait();
+						textfield.setText("");
+					}
+					
+					if(isServer)labelLetters.setText(player1.getLabelLetters());
+					else labelLetters.setText(player2.getLabelLetters());
+				}
+			} else {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("To nie twoja kolej");
+				alert.setHeaderText("Teraz przeciwnik wykonuje swój ruch");
+				alert.setContentText("Poczekaj aż drugi gracz skończy swoją turę");
+				alert.showAndWait();
+				textfield.setText("");
+			}
+			
+			if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
+				if (isServer){
 					for (int i = 0; i < player1.getLetters().length; i++) {
-						String s = String.valueOf(player1.getLetters()[i]);
-						if (s.equals(letter)) {
-							letterIsOK = true;
+						if (player1.getLetters()[i]== ""){
+							player1.getLetters()[i] = letter;
+							labelLetters.setText(player1.getLabelLetters());
+							break;	
 						}
 					}
 				} else {
-					for (int i = 0; i < player1.getLetters().length; i++) {
-						String s = String.valueOf(player2.getLetters()[i]);
-						if (s.equals(letter)) {
-							letterIsOK = true;
+					for (int i = 0; i < player2.getLetters().length; i++) {
+						if (player2.getLetters()[i]== ""){
+							player2.getLetters()[i] = letter;
+							labelLetters.setText(player2.getLabelLetters());
+							break;	
 						}
 					}
 				}
-
-				if (letterIsOK == false) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Niedozwolona litera");
-					alert.setHeaderText("Niedozwolona litera");
-					alert.setContentText("Nie posiadasz literki: " + letter);
-					alert.showAndWait();
-					textfield.setText("");
-				}
 			}
-		} else {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("To nie twoja kolej");
-			alert.setHeaderText("Teraz przeciwnik wykonuje swój ruch");
-			alert.setContentText("Poczekaj aż drugi gracz skończy swoją turę");
-			alert.showAndWait();
-			textfield.setText("");
 		}
-
+		
+		
 	}
 
 	public String[][] convertTextFieldToString() {
@@ -520,8 +542,7 @@ public class MainWindowController {
 			for (int j = 0; j < 15; j++) {
 				if (!textFieldBoard.get(i).get(j).getText().trim().isEmpty())
 					tempBoard[i][j] = textFieldBoard.get(i).get(j).getText();
-				else
-					tempBoard[i][j] = "";
+				else tempBoard[i][j] = "";
 			}
 		}
 		return tempBoard;
@@ -536,7 +557,7 @@ public class MainWindowController {
 			textFieldBoard.get(in.nextInt()).get(in.nextInt()).setText(in.next());
 		}
 	}
-
+	
 	private void removeNewWordFromBoard(String message) {
 		game.getBoard().addNewWordToStringBoard(message);
 		Scanner in = new Scanner(message).useDelimiter(",");
@@ -546,12 +567,12 @@ public class MainWindowController {
 			in.next();
 		}
 	}
-
+	
 	private void rejectNewWord(String message) {
-
+		
 		StringBuilder out = new StringBuilder();
 		out.append("REJECTWORD,").append(message);
-
+		
 		try {
 			if (this.isServer) {
 				serverApp.getConnection().send(out.toString());
@@ -562,12 +583,12 @@ public class MainWindowController {
 		}
 		disableTextFields();
 	}
-
-	public boolean isWordValid(String message) {
+	
+	public boolean isWordValid(String message){
 		boolean answer = false;
 		colorNewWords(message);
 		final FutureTask query = new FutureTask(new Callable<Boolean>() {
-
+		
 			@Override
 			public Boolean call() throws Exception {
 				Boolean answer = new Boolean(false);
@@ -575,7 +596,7 @@ public class MainWindowController {
 				alert.setTitle("Drugi gracz zaproponował nowe słowo");
 				alert.setHeaderText("Drugi gracz zaproponował nowe słowo. Sprawdz czy może je dodać.");
 				alert.setContentText("Nowe słowo znajdziesz na planszy");
-				// alert.initOwner(primaryStage);
+				//alert.initOwner(primaryStage);
 				alert.initModality(Modality.APPLICATION_MODAL);
 
 				ButtonType buttonConfirm = new ButtonType("Akceptuj");
@@ -585,13 +606,13 @@ public class MainWindowController {
 				alert.getButtonTypes().setAll(buttonConfirm, buttonReject, buttonCancel);
 
 				Optional<ButtonType> result = alert.showAndWait();
-
-				if (result.get() == buttonConfirm) {
+						
+				if (result.get() == buttonConfirm){
 					decolorNewLetters(message);
 					return answer.TRUE;
-				} else if (result.get() == buttonReject) {
+				} else if(result.get() == buttonReject){
 					decolorNewLetters(message);
-					// removeNewWordFromBoard(message);
+					//removeNewWordFromBoard(message);
 					return answer.FALSE;
 				} else {
 					decolorNewLetters(message);
@@ -599,18 +620,19 @@ public class MainWindowController {
 				}
 			}
 
+			
+			
 		});
-
-		Platform.runLater(query);
-		try {
-			answer = (boolean) query.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-		;
-		return answer;
+		
+	Platform.runLater(query);
+	try {
+		answer = (boolean) query.get();
+	} catch (InterruptedException e) {
+		e.printStackTrace();
+	} catch (ExecutionException e) {
+		e.printStackTrace();
+	};
+	return answer;
 	}
 
 	private void colorNewWords(String message) {
@@ -621,9 +643,9 @@ public class MainWindowController {
 			int y = in.nextInt();
 			textFieldBoard.get(x).get(y).setStyle("-fx-control-inner-background: orange");
 			in.next();
-		}
+		}	
 	}
-
+	
 	private void decolorNewLetters(String message) {
 		Scanner in = new Scanner(message).useDelimiter(",");
 		StringBuilder out = new StringBuilder();
@@ -632,21 +654,21 @@ public class MainWindowController {
 			int y = in.nextInt();
 			textFieldBoard.get(x).get(y).setStyle(null);
 			in.next();
-		}
-
+		}	
+		
 	}
-
-	public void disableTextFields() {
-		for (int i = 0; i < 15; i++) {
-			for (int j = 0; j < 15; j++) {
+	
+	public void disableTextFields(){
+		for(int i=0; i<15; i++){
+			for (int j = 0; j<15; j++){
 				textFieldBoard.get(j).get(i).setEditable(false);
 			}
 		}
 	}
-
-	public void enableTextFields() {
-		for (int i = 0; i < 15; i++) {
-			for (int j = 0; j < 15; j++) {
+	
+	public void enableTextFields(){
+		for(int i=0; i<15; i++){
+			for (int j = 0; j<15; j++){
 				textFieldBoard.get(j).get(i).setEditable(true);
 			}
 		}
