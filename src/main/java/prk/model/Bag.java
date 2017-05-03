@@ -51,6 +51,16 @@ public class Bag {
 		}
 	}
 
+	public int returnPointsOfLetter(String letter) {
+		int index = 0;
+		for (int i = 0; i < letters.length; i++) {
+			if (letters[i].equals(letter)) {
+				index = i;
+			}
+		}
+		return pointsOfLetters[index];
+	}
+
 	public int[] getNumberOfLetters() {
 		return numberOfLetters;
 	}

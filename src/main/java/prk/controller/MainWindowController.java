@@ -41,7 +41,7 @@ public class MainWindowController {
 	@FXML
 	private TextArea textarea;
 	@FXML
-	private Label labelBag, labelLetters;
+	private Label labelBag, labelLetters, labelPlayer1Points, labelPlayer2Points;
 
 	@FXML
 	private ArrayList<ArrayList<TextFieldLimited>> textFieldBoard;
@@ -187,7 +187,9 @@ public class MainWindowController {
 			} else if ((message.matches("REJECTWORD,.+"))) {
 				rejectWordAction(message);
 			} else if (message.matches("NEWWORD .+")) {
-				newWordAction(message);
+				newWordAction(message, true);
+			} else if (message.matches("POINTS \\d*")){
+				getPointsAction(message, true);
 			}
 		} else {
 			if (message.matches("WELCOMELETTERS \\D* \\d*")) {
@@ -238,18 +240,82 @@ public class MainWindowController {
 			} else if ((message.matches("REJECTWORD,.+"))) {
 				rejectWordAction(message);
 			} else if (message.matches("NEWWORD .+")) {
-				newWordAction(message);
+				newWordAction(message, false);
+			} else if (message.matches("POINTS \\d*")){
+				getPointsAction(message, false);
 			}
 		}
 	}
 
-	public void newWordAction(String message) {
-		String newWord = message.substring(8); // utnij newword i wez
-												// same wspolrzedne
-		getTextarea().appendText(newWord + "\n");
+	public void getPointsAction(String message, boolean isServer) {
+		String points = message.substring(7);
+		if (isServer) {
+			player1.setPoints(player1.getPoints() + Integer.valueOf(points));
+			Platform.runLater(()->{labelPlayer1Points.setText(String.valueOf(player1.getPoints()) + " puntków");});
+		} else{
+			player2.setPoints(player2.getPoints() + Integer.valueOf(points));
+			Platform.runLater(()->{labelPlayer2Points.setText(String.valueOf(player2.getPoints()) + " puntków");});
+		}
+	} 
+
+	public void newWordAction(String message, boolean isServer) {
+		String newWord = message.substring(8); // utnij newword i wez same
+												// wspolrzedne
+		textarea.appendText(newWord + "\n");
 		addNewWordToBoard(newWord);
 		if (isWordValid(newWord)) {
-			enableTextFields();
+			int i = 0; // wczytanie wspolrzednej i
+			int j = 2; // wcyztanie wspolrzednej j
+			int nextI = 6; //do zwiekszania i pobierania nastepnej wspolrzednej i
+			int letterIndex = 4; // na ktorym miejscu stoi litera
+			int points = 0; // punkty za slowo
+			String letter = ""; // litera
+			while (i < newWord.length()) {
+				nextI = 6;
+				// ogarnięcie czy wspolrzedna jest jednocyforwa czy dwucyfrowa
+				if (newWord.charAt(i + 1) == ',') {
+					j = i + 2;
+				} else {
+					j = i + 3;
+					nextI++;
+				}
+				if (newWord.charAt(j + 1) == ',') {
+					letterIndex = j + 2;
+				} else {
+					letterIndex = j + 3;
+					nextI++;
+				}
+				letter = newWord.substring(letterIndex, letterIndex + 1);
+				points += bag.returnPointsOfLetter(letter);
+				i += nextI;
+			}
+			String out = "POINTS ";
+			if (isServer) {
+				player2.setPoints(player2.getPoints() + points); // policz punkty dla przeciwnika i mu je wyslij
+				Platform.runLater(()->{labelPlayer2Points.setText(player2.getPoints() + " punktów");});
+				out = out + String.valueOf(player2.getPoints());
+				try {
+					serverApp.getConnection().send(out);
+				} catch (Exception e) {
+					textarea.appendText("Failed to send \n");
+				}
+			} else {
+				player1.setPoints(player1.getPoints() + points); // policz punkty dla przeciwnika i mu je wyslij
+				Platform.runLater(()->{labelPlayer1Points.setText(player1.getPoints() + " punktów");});
+				out = out + String.valueOf(player1.getPoints());
+				try {
+					clientApp.getConnection().send(out);
+				} catch (Exception e) {
+					textarea.appendText("Failed to send \n");
+				}
+			}
+
+
+			// oblicz sume punktow
+			// dodaj punkty do gracza
+			// wylosuj nowe litery
+
+			disableTextFields();
 			game.setAnotherPlayerTurn();
 		} else {
 			removeNewWordFromBoard(newWord);
@@ -259,8 +325,7 @@ public class MainWindowController {
 
 	public void rejectWordAction(String message) {
 		String modifiedMessage = message.replace("REJECTWORD,", "");
-		textarea.appendText(
-				"Przeciwnik nie zaakceptował słowa: " + game.decryptMessage(modifiedMessage) + "\n");
+		textarea.appendText("Przeciwnik nie zaakceptował słowa: " + game.decryptMessage(modifiedMessage) + "\n");
 		removeNewWordFromBoard(modifiedMessage);
 		game.setAnotherPlayerTurn();
 		enableTextFields();
@@ -291,7 +356,8 @@ public class MainWindowController {
 			counter = counter + 2;
 		}
 		labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
-		game.setAnotherPlayerTurn();;
+		game.setAnotherPlayerTurn();
+		;
 	}
 
 	public void leaveTurnAction(String message) {
