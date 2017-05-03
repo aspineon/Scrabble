@@ -400,77 +400,79 @@ public class MainWindowController {
 	}
 
 	public void checkLetter(KeyEvent event) {
-		TextFieldLimited textfield = (TextFieldLimited) event.getSource();
-		String letter = textfield.getText();
+		if (!event.isAltDown()){
+			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
+			String letter = textfield.getText();
+			ScrabblePlayer currentPlayer;
+			if (this.isServer) {
+				currentPlayer = player1;
+			} else {
+				currentPlayer = player2;
+			}
+			
+			if(currentPlayer.isMyTurn()){
+				if (letter != null) {
+					boolean letterIsOK = false;
+					if (isServer) {
+						for (int i = 0; i < player1.getLetters().length; i++) {
+							String s = player1.getLetters()[i];
+							if (s.equals(letter) || letter.equals("")) {
+								letterIsOK = true;
+								player1.setLetter(i, "");
+							}
+						}
+					} else {
+						for (int i = 0; i < player2.getLetters().length; i++) {
+							String s = player2.getLetters()[i];
+							if (s.equals(letter) || letter.equals("")) {
+								letterIsOK = true;
+								player2.setLetter(i, "");
+							}
+						}
+					}
 
-		ScrabblePlayer currentPlayer;
-		if (this.isServer) {
-			currentPlayer = player1;
-		} else {
-			currentPlayer = player2;
-		}
-		
-		if(currentPlayer.isMyTurn()){
-			if (letter != null) {
-				boolean letterIsOK = false;
-				if (isServer) {
+					if (letterIsOK == false) {
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Niedozwolona litera");
+						alert.setHeaderText("Niedozwolona litera");
+						alert.setContentText("Nie posiadasz literki: " + letter);
+						alert.showAndWait();
+						textfield.setText("");
+					}
+					
+					if(isServer)labelLetters.setText(player1.getLabelLetters());
+					else labelLetters.setText(player2.getLabelLetters());
+				}
+			} else {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("To nie twoja kolej");
+				alert.setHeaderText("Teraz przeciwnik wykonuje swój ruch");
+				alert.setContentText("Poczekaj aż drugi gracz skończy swoją turę");
+				alert.showAndWait();
+				textfield.setText("");
+			}
+			
+			if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
+				if (isServer){
 					for (int i = 0; i < player1.getLetters().length; i++) {
-						String s = String.valueOf(player1.getLetters()[i]);
-						if (s.equals(letter) || letter.equals("")) {
-							letterIsOK = true;
-							player1.setLetter(i, "");
+						if (player1.getLetters()[i]== ""){
+							player1.getLetters()[i] = letter;
+							labelLetters.setText(player1.getLabelLetters());
+							break;	
 						}
 					}
 				} else {
 					for (int i = 0; i < player2.getLetters().length; i++) {
-						String s = String.valueOf(player2.getLetters()[i]);
-						if (s.equals(letter) || letter.equals("")) {
-							letterIsOK = true;
-							player2.setLetter(i, "");
+						if (player2.getLetters()[i]== ""){
+							player2.getLetters()[i] = letter;
+							labelLetters.setText(player2.getLabelLetters());
+							break;	
 						}
 					}
 				}
-
-				if (letterIsOK == false) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Niedozwolona litera");
-					alert.setHeaderText("Niedozwolona litera");
-					alert.setContentText("Nie posiadasz literki: " + letter);
-					alert.showAndWait();
-					textfield.setText("");
-				}
-				
-				if(isServer)labelLetters.setText(player1.getLabelLetters());
-				else labelLetters.setText(player2.getLabelLetters());
 			}
-		} else {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("To nie twoja kolej");
-			alert.setHeaderText("Teraz przeciwnik wykonuje swój ruch");
-			alert.setContentText("Poczekaj aż drugi gracz skończy swoją turę");
-			alert.showAndWait();
-			textfield.setText("");
 		}
 		
-		if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
-			if (isServer){
-				for (int i = 0; i < player1.getLetters().length; i++) {
-					if (player1.getLetters()[i]== ""){
-						player1.getLetters()[i] = letter;
-						labelLetters.setText(player1.getLabelLetters());
-						break;	
-					}
-				}
-			} else {
-				for (int i = 0; i < player2.getLetters().length; i++) {
-					if (player2.getLetters()[i]== ""){
-						player2.getLetters()[i] = letter;
-						labelLetters.setText(player2.getLabelLetters());
-						break;	
-					}
-				}
-			}
-		}
 		
 	}
 
