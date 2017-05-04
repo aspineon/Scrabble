@@ -2,6 +2,7 @@ package prk.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
@@ -536,6 +537,7 @@ public class MainWindowController {
 							String s = player1.getLetters()[i];
 							if (s.equals(letter) || letter.equals("")) {
 								letterIsOK = true;
+								player1.addUsedLetter(letter);
 								player1.setLetter(i, "");
 							}
 						}
@@ -544,6 +546,7 @@ public class MainWindowController {
 							String s = player2.getLetters()[i];
 							if (s.equals(letter) || letter.equals("")) {
 								letterIsOK = true;
+								player2.addUsedLetter(letter);
 								player2.setLetter(i, "");
 							}
 						}
@@ -574,23 +577,41 @@ public class MainWindowController {
 		}
 		
 		if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
-			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
-			String letter = textfield.getText();
+			System.out.println("Przed sortowaniem planszy");
+			String[] currentBoard = convertNewWordToStringArray();
+			System.out.println(currentBoard[0]);
+			Arrays.sort(currentBoard, Collections.reverseOrder());
+			System.out.println("Po sortowaniu planszy");
 			if (isServer){
-				for (int i = 0; i < player1.getLetters().length; i++) {
-					if (player1.getLetters()[i]== ""){
-						player1.getLetters()[i] = letter;
-						labelLetters.setText(player1.getLabelLetters());
-						break;	
+				String[] usedLetters = player1.getUsedLetters();
+				Arrays.sort(usedLetters, Collections.reverseOrder());
+				
+				for (int i = 0; i < usedLetters.length; i++) {
+					System.out.println(i + "Sprawdzenie czy to ta literka");
+					if (usedLetters[i]!= "" && !usedLetters[i].equals(currentBoard[i])){
+						for (int j=0; j < player1.getLetters().length; j++)	{
+							if (player1.getLetters()[j]== ""){
+								player1.getLetters()[j]=usedLetters[i];
+								labelLetters.setText(player1.getLabelLetters());
+								break;
+							}
+						}
 					}
 				}
 			} else {
-				for (int i = 0; i < player2.getLetters().length; i++) {
-					if (player2.getLetters()[i]== ""){
-						player2.getLetters()[i] = letter;
-						labelLetters.setText(player2.getLabelLetters());
-						break;	
-
+				String[] usedLetters = player2.getUsedLetters();
+				Arrays.sort(usedLetters, Collections.reverseOrder());
+				
+				for (int i = 0; i < usedLetters.length; i++) {
+					System.out.println(i + "Sprawdzenie czy to ta literka");
+					if (usedLetters[i]!= "" && !usedLetters[i].equals(currentBoard[i])){
+						for (int j=0; j < player2.getLetters().length; j++)	{
+							if (player2.getLetters()[j]== ""){
+								player2.getLetters()[j]=usedLetters[i];
+								labelLetters.setText(player2.getLabelLetters());
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -734,6 +755,36 @@ public class MainWindowController {
 				textFieldBoard.get(j).get(i).setEditable(true);
 			}
 		}
+	}
+	
+	public String[] convertNewWordToStringArray(){
+		String[] newWordArray = new String[7];
+		int count = 0;
+		
+		String[][] tempBoard = new String[15][15];
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (textFieldBoard.get(i).get(j).getText()!=null){
+					if (!textFieldBoard.get(i).get(j).getText().trim().isEmpty()) {
+						tempBoard[i][j] = textFieldBoard.get(i).get(j).getText();
+					} else tempBoard[i][j] = "";
+				} else tempBoard[i][j] = "";
+				
+			}
+		}
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (!tempBoard[i][j].equals((game.getBoard().getStringCurrentBoard()[i][j]))) {
+					newWordArray[count] = tempBoard[i][j];
+					System.out.println("literka" + newWordArray[count]);
+				}
+			}
+		}
+		while(count<7){
+			newWordArray[count] = "";
+			count++;
+		}
+		return newWordArray;
 	}
 
 	public void confirmConnection() throws Exception {
