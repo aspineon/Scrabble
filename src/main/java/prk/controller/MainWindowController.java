@@ -28,7 +28,7 @@ import prk.model.ScrabblePlayer;
 import prk.model.TextFieldLimited;
 
 public class MainWindowController {
-//komentarz
+	// komentarz
 	private Stage primaryStage;
 	private ServerApp serverApp;
 	private ClientApp clientApp;
@@ -38,11 +38,12 @@ public class MainWindowController {
 	private ScrabblePlayer player1;
 	private ScrabblePlayer player2;
 	private Bag bag;
+	private ScrabbleBoard board;
 
 	@FXML
 	private TextArea textarea;
 	@FXML
-	private Label labelBag, labelLetters;
+	private Label labelBag, labelLetters, labelPlayer1Points, labelPlayer2Points;
 
 	@FXML
 	private ArrayList<ArrayList<TextFieldLimited>> textFieldBoard;
@@ -104,7 +105,8 @@ public class MainWindowController {
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
 		bag = game.getBag();
-		
+		board = game.getBoard();
+
 		StringBuilder letters = new StringBuilder();
 		for (String c : game.getPlayer1().getLetters()) {
 			letters.append(c).append(" ");
@@ -122,7 +124,7 @@ public class MainWindowController {
 		player1 = game.getPlayer1();
 		player2 = game.getPlayer2();
 		bag = game.getBag();
-		
+		board = game.getBoard();
 	}
 
 	public void confirm() {
@@ -152,8 +154,8 @@ public class MainWindowController {
 			textarea.appendText("Czekaj na swoją kolej! \n");
 		}
 
-}
-	
+	}
+
 	public void getMessage(String message) {
 
 		if (isServer) {
@@ -188,7 +190,9 @@ public class MainWindowController {
 			} else if ((message.matches("REJECTWORD,.+"))) {
 				rejectWordAction(message);
 			} else if (message.matches("NEWWORD .+")) {
-				newWordAction(message);
+				newWordAction(message, true);
+			} else if (message.matches("POINTS \\d*")) {
+				getPointsAction(message, true);
 			}
 		} else {
 			if (message.matches("WELCOMELETTERS \\D* \\d*")) {
@@ -239,17 +243,129 @@ public class MainWindowController {
 			} else if ((message.matches("REJECTWORD,.+"))) {
 				rejectWordAction(message);
 			} else if (message.matches("NEWWORD .+")) {
-				newWordAction(message);
+				newWordAction(message, false);
+			} else if (message.matches("POINTS \\d*")) {
+				getPointsAction(message, false);
 			}
 		}
-}
-	
-	public void newWordAction(String message) {
-		String newWord = message.substring(8); // utnij newword i wez
-												// same wspolrzedne
-		getTextarea().appendText(newWord + "\n");
+	}
+
+	public void getPointsAction(String message, boolean isServer) {
+		String points = message.substring(7);
+		disableTextFields();
+		if (isServer) {
+			player1.setPoints(player1.getPoints() + Integer.valueOf(points));
+			Platform.runLater(() -> {
+				labelPlayer1Points.setText(String.valueOf(player1.getPoints()) + " puntków");
+			});
+		} else {
+			player2.setPoints(player2.getPoints() + Integer.valueOf(points));
+			Platform.runLater(() -> {
+				labelPlayer2Points.setText(String.valueOf(player2.getPoints()) + " puntków");
+			});
+		}
+	}
+
+	public void newWordAction(String message, boolean isServer) {
+		String newWord = message.substring(8); // utnij newword i wez same
+												// wspolrzedne
+		textarea.appendText(newWord + "\n");
 		addNewWordToBoard(newWord);
 		if (isWordValid(newWord)) {
+			int i = 0; // pozycja wspolrzednej i w ciągu znaków message
+			int iValue; // wartość i
+			int j = 2; // pozycja wspolrzednej j w ciągu znaków message
+			int jValue; // wartość j
+			int nextI = 6; // do zwiekszania i pobierania nastepnej pozycji i
+			int letterIndex = 4; // na ktorym miejscu w ciągu znaków stoi litera
+			int points = 0; // punkty za slowo
+			boolean wordDoubleBonus = false; // czy jest podwojna premia slowna
+			boolean wordTripleBonus = false; // czy jest potrojna premia slowna
+			String letter = ""; // litera
+			while (i < newWord.length()) {
+				nextI = 6;
+				iValue = 0;
+				jValue = 0;
+				// ogarnięcie czy wspolrzedna jest jednocyforwa czy dwucyfrowa
+				if (newWord.charAt(i + 1) == ',') {
+					iValue = Integer.valueOf(newWord.substring(i, i + 1));
+					j = i + 2;
+				} else {
+					iValue = Integer.valueOf(newWord.substring(i, i + 2));
+					j = i + 3;
+					nextI++;
+				}
+				if (newWord.charAt(j + 1) == ',') {
+					jValue = Integer.valueOf(newWord.substring(j, j + 1));
+					letterIndex = j + 2;
+				} else {
+					jValue = Integer.valueOf(newWord.substring(j, j + 2));
+					letterIndex = j + 3;
+					nextI++;
+				}
+				letter = newWord.substring(letterIndex, letterIndex + 1);
+
+				// doliczenie premii literowej
+				int letterFactor = board.getLetterFactor()[iValue][jValue];
+				if (board.getLetterFactorUsed()[iValue][jValue] == false) {
+					points += bag.returnPointsOfLetter(letter) * letterFactor;
+					board.getLetterFactorUsed()[iValue][jValue] = true;
+				} else {
+					points += bag.returnPointsOfLetter(letter);
+				}
+
+				// doliczenie premii słownej
+				int wordFactor = board.getWordFactor()[iValue][jValue];
+				if (wordFactor > 1) {
+					if (board.getLetterFactorUsed()[iValue][jValue] == false) {
+						if (wordFactor == 2)
+							wordDoubleBonus = true;
+						if (wordFactor == 3)
+							wordTripleBonus = true;
+					}
+				}
+				i += nextI;
+			}
+			if (wordDoubleBonus) {
+				points = points * 2;
+			}
+			if (wordTripleBonus) {
+				points = points * 3;
+			}
+			String out = "POINTS ";
+			if (isServer) {
+				player2.setPoints(player2.getPoints() + points); // policz
+																	// punkty
+																	// dla
+																	// przeciwnika
+																	// i mu je
+																	// wyslij
+				Platform.runLater(() -> {
+					labelPlayer2Points.setText(player2.getPoints() + " punktów");
+				});
+				out = out + String.valueOf(player2.getPoints());
+				try {
+					serverApp.getConnection().send(out);
+				} catch (Exception e) {
+					textarea.appendText("Failed to send \n");
+				}
+			} else {
+				player1.setPoints(player1.getPoints() + points); // policz
+																	// punkty
+																	// dla
+																	// przeciwnika
+																	// i mu je
+																	// wyslij
+				Platform.runLater(() -> {
+					labelPlayer1Points.setText(player1.getPoints() + " punktów");
+				});
+				out = out + String.valueOf(player1.getPoints());
+				try {
+					clientApp.getConnection().send(out);
+				} catch (Exception e) {
+					textarea.appendText("Failed to send \n");
+				}
+			}
 			enableTextFields();
 			game.setAnotherPlayerTurn();
 		} else {
@@ -260,8 +376,7 @@ public class MainWindowController {
 
 	public void rejectWordAction(String message) {
 		String modifiedMessage = message.replace("REJECTWORD,", "");
-		textarea.appendText(
-				"Przeciwnik nie zaakceptował słowa: " + game.decryptMessage(modifiedMessage) + "\n");
+		textarea.appendText("Przeciwnik nie zaakceptował słowa: " + game.decryptMessage(modifiedMessage) + "\n");
 		removeNewWordFromBoard(modifiedMessage);
 		game.setAnotherPlayerTurn();
 		enableTextFields();
@@ -292,14 +407,15 @@ public class MainWindowController {
 			counter = counter + 2;
 		}
 		labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
-		game.setAnotherPlayerTurn();;
+		game.setAnotherPlayerTurn();
+		;
 	}
 
 	public void leaveTurnAction(String message) {
 		textarea.appendText(message.substring(10) + "\n");
 		enableTextFields();
 		game.setAnotherPlayerTurn();
-}
+	}
 
 	public void changeLetters() {
 		// ustalenie kto nacisnął przycisk, aby nie powielać kodu
@@ -400,8 +516,9 @@ public class MainWindowController {
 	}
 
 	public void checkLetter(KeyEvent event) {
-		
-		if (!event.isAltDown()){
+
+		if (!event.isAltDown()) {
+
 			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
 			String letter = textfield.getText();
 			ScrabblePlayer currentPlayer;
@@ -410,8 +527,8 @@ public class MainWindowController {
 			} else {
 				currentPlayer = player2;
 			}
-			
-			if(currentPlayer.isMyTurn()){
+
+			if (currentPlayer.isMyTurn()) {
 				if (letter != null) {
 					boolean letterIsOK = false;
 					if (isServer) {
@@ -440,9 +557,11 @@ public class MainWindowController {
 						alert.showAndWait();
 						textfield.setText("");
 					}
-					
-					if(isServer)labelLetters.setText(player1.getLabelLetters());
-					else labelLetters.setText(player2.getLabelLetters());
+
+					if (isServer)
+						labelLetters.setText(player1.getLabelLetters());
+					else
+						labelLetters.setText(player2.getLabelLetters());
 				}
 			} else {
 				Alert alert = new Alert(AlertType.ERROR);
@@ -471,12 +590,12 @@ public class MainWindowController {
 						player2.getLetters()[i] = letter;
 						labelLetters.setText(player2.getLabelLetters());
 						break;	
+
 					}
 				}
 			}
 		}
-		
-		
+
 	}
 
 	public String[][] convertTextFieldToString() {
@@ -485,7 +604,8 @@ public class MainWindowController {
 			for (int j = 0; j < 15; j++) {
 				if (!textFieldBoard.get(i).get(j).getText().trim().isEmpty())
 					tempBoard[i][j] = textFieldBoard.get(i).get(j).getText();
-				else tempBoard[i][j] = "";
+				else
+					tempBoard[i][j] = "";
 			}
 		}
 		return tempBoard;
@@ -500,7 +620,7 @@ public class MainWindowController {
 			textFieldBoard.get(in.nextInt()).get(in.nextInt()).setText(in.next());
 		}
 	}
-	
+
 	private void removeNewWordFromBoard(String message) {
 		game.getBoard().addNewWordToStringBoard(message);
 		Scanner in = new Scanner(message).useDelimiter(",");
@@ -510,12 +630,12 @@ public class MainWindowController {
 			in.next();
 		}
 	}
-	
+
 	private void rejectNewWord(String message) {
-		
+
 		StringBuilder out = new StringBuilder();
 		out.append("REJECTWORD,").append(message);
-		
+
 		try {
 			if (this.isServer) {
 				serverApp.getConnection().send(out.toString());
@@ -526,12 +646,12 @@ public class MainWindowController {
 		}
 		disableTextFields();
 	}
-	
-	public boolean isWordValid(String message){
+
+	public boolean isWordValid(String message) {
 		boolean answer = false;
 		colorNewWords(message);
 		final FutureTask query = new FutureTask(new Callable<Boolean>() {
-		
+
 			@Override
 			public Boolean call() throws Exception {
 				Boolean answer = new Boolean(false);
@@ -539,7 +659,7 @@ public class MainWindowController {
 				alert.setTitle("Drugi gracz zaproponował nowe słowo");
 				alert.setHeaderText("Drugi gracz zaproponował nowe słowo. Sprawdz czy może je dodać.");
 				alert.setContentText("Nowe słowo znajdziesz na planszy");
-				//alert.initOwner(primaryStage);
+				// alert.initOwner(primaryStage);
 				alert.initModality(Modality.APPLICATION_MODAL);
 
 				ButtonType buttonConfirm = new ButtonType("Akceptuj");
@@ -549,13 +669,13 @@ public class MainWindowController {
 				alert.getButtonTypes().setAll(buttonConfirm, buttonReject, buttonCancel);
 
 				Optional<ButtonType> result = alert.showAndWait();
-						
-				if (result.get() == buttonConfirm){
+
+				if (result.get() == buttonConfirm) {
 					decolorNewLetters(message);
 					return answer.TRUE;
-				} else if(result.get() == buttonReject){
+				} else if (result.get() == buttonReject) {
 					decolorNewLetters(message);
-					//removeNewWordFromBoard(message);
+					// removeNewWordFromBoard(message);
 					return answer.FALSE;
 				} else {
 					decolorNewLetters(message);
@@ -563,19 +683,18 @@ public class MainWindowController {
 				}
 			}
 
-			
-			
 		});
-		
-	Platform.runLater(query);
-	try {
-		answer = (boolean) query.get();
-	} catch (InterruptedException e) {
-		e.printStackTrace();
-	} catch (ExecutionException e) {
-		e.printStackTrace();
-	};
-	return answer;
+
+		Platform.runLater(query);
+		try {
+			answer = (boolean) query.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		;
+		return answer;
 	}
 
 	private void colorNewWords(String message) {
@@ -586,9 +705,9 @@ public class MainWindowController {
 			int y = in.nextInt();
 			textFieldBoard.get(x).get(y).setStyle("-fx-control-inner-background: orange");
 			in.next();
-		}	
+		}
 	}
-	
+
 	private void decolorNewLetters(String message) {
 		Scanner in = new Scanner(message).useDelimiter(",");
 		StringBuilder out = new StringBuilder();
@@ -597,21 +716,21 @@ public class MainWindowController {
 			int y = in.nextInt();
 			textFieldBoard.get(x).get(y).setStyle(null);
 			in.next();
-		}	
-		
+		}
+
 	}
-	
-	public void disableTextFields(){
-		for(int i=0; i<15; i++){
-			for (int j = 0; j<15; j++){
+
+	public void disableTextFields() {
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
 				textFieldBoard.get(j).get(i).setEditable(false);
 			}
 		}
 	}
-	
-	public void enableTextFields(){
-		for(int i=0; i<15; i++){
-			for (int j = 0; j<15; j++){
+
+	public void enableTextFields() {
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
 				textFieldBoard.get(j).get(i).setEditable(true);
 			}
 		}

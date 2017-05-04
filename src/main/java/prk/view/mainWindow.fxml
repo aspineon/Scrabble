@@ -1466,13 +1466,13 @@
                   <HBox spacing="3.0">
                      <children>
                         <Label text="Gracz 1" />
-                        <Label text="0 punktów" />
+                        <Label fx:id="labelPlayer1Points" text="0 punktów" />
                      </children>
                   </HBox>
                   <HBox spacing="3.0">
                      <children>
                         <Label text="Gracz 2" />
-                        <Label text="0 punktów" />
+                        <Label fx:id="labelPlayer2Points" text="0 punktów" />
                      </children>
                   </HBox>
                   <Label fx:id="labelBag" text="Worek: 100 płytek" />
