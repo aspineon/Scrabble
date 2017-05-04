@@ -400,6 +400,7 @@ public class MainWindowController {
 	}
 
 	public void checkLetter(KeyEvent event) {
+		
 		if (!event.isAltDown()){
 			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
 			String letter = textfield.getText();
@@ -451,23 +452,25 @@ public class MainWindowController {
 				alert.showAndWait();
 				textfield.setText("");
 			}
-			
-			if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
-				if (isServer){
-					for (int i = 0; i < player1.getLetters().length; i++) {
-						if (player1.getLetters()[i]== ""){
-							player1.getLetters()[i] = letter;
-							labelLetters.setText(player1.getLabelLetters());
-							break;	
-						}
+		}
+		
+		if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
+			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
+			String letter = textfield.getText();
+			if (isServer){
+				for (int i = 0; i < player1.getLetters().length; i++) {
+					if (player1.getLetters()[i]== ""){
+						player1.getLetters()[i] = letter;
+						labelLetters.setText(player1.getLabelLetters());
+						break;	
 					}
-				} else {
-					for (int i = 0; i < player2.getLetters().length; i++) {
-						if (player2.getLetters()[i]== ""){
-							player2.getLetters()[i] = letter;
-							labelLetters.setText(player2.getLabelLetters());
-							break;	
-						}
+				}
+			} else {
+				for (int i = 0; i < player2.getLetters().length; i++) {
+					if (player2.getLetters()[i]== ""){
+						player2.getLetters()[i] = letter;
+						labelLetters.setText(player2.getLabelLetters());
+						break;	
 					}
 				}
 			}

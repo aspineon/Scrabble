@@ -43,11 +43,14 @@ public class ScrabblePlayer {
 	
 	public String getLabelLetters(){
 		StringBuilder labelLetters = new StringBuilder();
-		for (int i =0; i<letters.length; i++){
-			if (!letters[i].equals("")){
-				labelLetters.append(letters[i] + " ");
-			} else ;
+		for (int i =0; i<7; i++){
+			System.out.println(letters[i]);
+			if (letters[i]!=null){
+				if (!letters[i].equals(""))
+					labelLetters.append(letters[i] + " ");
+			}
 		}
 		return labelLetters.toString();
 	}
+
 }
