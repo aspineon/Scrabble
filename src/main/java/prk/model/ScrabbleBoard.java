@@ -176,11 +176,11 @@ public class ScrabbleBoard {
 		in.close();
 	}
 
-	public String[][] getCharCurrentBoard() {
+	public String[][] getStringCurrentBoard() {
 		return stringCurrentBoard;
 	}
 
-	public void setCharCurrentBoard(String[][] charCurrentBoard) {
+	public void setStringCurrentBoard(String[][] charCurrentBoard) {
 		this.stringCurrentBoard = charCurrentBoard;
 	}
 

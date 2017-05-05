@@ -1,11 +1,10 @@
 package prk.model;
 
-import java.util.ArrayList;
-
 public class ScrabblePlayer {
 	private boolean myTurn;
 	private int points;
 	private String[] letters;
+	private String[] usedLetters = {"", "", "", "", "", "", ""};
 
 	public ScrabblePlayer() {
 		this.myTurn = false;
@@ -43,11 +42,28 @@ public class ScrabblePlayer {
 	
 	public String getLabelLetters(){
 		StringBuilder labelLetters = new StringBuilder();
-		for (int i =0; i<letters.length; i++){
-			if (!letters[i].equals("")){
-				labelLetters.append(letters[i] + " ");
-			} else ;
+		for (int i =0; i<7; i++){
+			if (letters[i]!=null){
+				if (!letters[i].equals(""))
+					labelLetters.append(letters[i] + " ");
+			}
 		}
 		return labelLetters.toString();
 	}
+
+	public void addUsedLetter(String letter){
+		int i = 0;
+		while (usedLetters[i]!="") i++;
+		usedLetters[i] = letter;
+	}
+
+	public String[] getUsedLetters() {
+		return usedLetters;
+	}
+
+	public void setUsedLetters(String[] usedLetters) {
+		this.usedLetters = usedLetters;
+	}
+
+	
 }
