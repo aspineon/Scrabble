@@ -137,9 +137,10 @@ public class MainWindowController {
 		}
 
 		if (currentPlayer.isMyTurn()) {
-			String message = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
+			String letters = game.getBoard().getNewLettersFromBoard(convertTextFieldToString());
+			String wholeWord = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
+			String message = "NEWWORD " + letters + " " + wholeWord;
 			textarea.appendText(message + "\n");
-			message = "NEWWORD " + message;
 			disableTextFields();
 			game.setAnotherPlayerTurn();
 			try {
@@ -267,11 +268,24 @@ public class MainWindowController {
 	}
 
 	public void newWordAction(String message, boolean isServer) {
-		String newWord = message.substring(8); // utnij newword i wez same
-												// wspolrzedne
-		textarea.appendText(newWord + "\n");
-		addNewWordToBoard(newWord);
-		if (isWordValid(newWord)) {
+		// utnij napis newword
+		String newLetters = message.substring(8);
+		// znajdz przerwe miedzy wspolrzednymi i calym wyrazem
+		boolean isSpace = false;
+		int coordinatesLength = 0;
+		for (int i = 0; i < newLetters.length(); i++) {
+			if (newLetters.substring(i, i + 1).equals(" ")) {
+				isSpace = true;
+				coordinatesLength += i;
+				break;
+			}
+		}
+		String newWord = newLetters.substring(coordinatesLength+1);
+		newLetters = newLetters.substring(0, coordinatesLength);
+		
+		textarea.appendText(newLetters + "\n");
+		addNewWordToBoard(newLetters);
+		if (isWordValid(newLetters, newWord)) {
 			int i = 0; // pozycja wspolrzednej i w ciągu znaków message
 			int iValue; // wartość i
 			int j = 2; // pozycja wspolrzednej j w ciągu znaków message
@@ -282,50 +296,53 @@ public class MainWindowController {
 			boolean wordDoubleBonus = false; // czy jest podwojna premia slowna
 			boolean wordTripleBonus = false; // czy jest potrojna premia slowna
 			String letter = ""; // litera
-			while (i < newWord.length()) {
+			while (i < newLetters.length()) {
 				nextI = 6;
 				iValue = 0;
 				jValue = 0;
 				// ogarnięcie czy wspolrzedna jest jednocyforwa czy dwucyfrowa
-				if (newWord.charAt(i + 1) == ',') {
-					iValue = Integer.valueOf(newWord.substring(i, i + 1));
+				if (newLetters.charAt(i + 1) == ',') {
+					iValue = Integer.valueOf(newLetters.substring(i, i + 1));
 					j = i + 2;
 				} else {
-					iValue = Integer.valueOf(newWord.substring(i, i + 2));
+					iValue = Integer.valueOf(newLetters.substring(i, i + 2));
 					j = i + 3;
 					nextI++;
 				}
-				if (newWord.charAt(j + 1) == ',') {
-					jValue = Integer.valueOf(newWord.substring(j, j + 1));
+				if (newLetters.charAt(j + 1) == ',') {
+					jValue = Integer.valueOf(newLetters.substring(j, j + 1));
 					letterIndex = j + 2;
 				} else {
-					jValue = Integer.valueOf(newWord.substring(j, j + 2));
+					jValue = Integer.valueOf(newLetters.substring(j, j + 2));
 					letterIndex = j + 3;
 					nextI++;
 				}
-				letter = newWord.substring(letterIndex, letterIndex + 1);
+				letter = newLetters.substring(letterIndex, letterIndex + 1);
 
 				// doliczenie premii literowej
-				int letterFactor = board.getLetterFactor()[iValue][jValue];
-				if (board.getLetterFactorUsed()[iValue][jValue] == false) {
-					points += bag.returnPointsOfLetter(letter) * letterFactor;
-					board.getLetterFactorUsed()[iValue][jValue] = true;
-				} else {
-					points += bag.returnPointsOfLetter(letter);
-				}
+				int letterFactor = board.getLetterFactor()[jValue][iValue];
+				points += bag.returnPointsOfLetter(letter) * letterFactor;
 
 				// doliczenie premii słownej
 				int wordFactor = board.getWordFactor()[iValue][jValue];
 				if (wordFactor > 1) {
-					if (board.getLetterFactorUsed()[iValue][jValue] == false) {
 						if (wordFactor == 2)
 							wordDoubleBonus = true;
 						if (wordFactor == 3)
 							wordTripleBonus = true;
-					}
 				}
+				
+				//usun z nowego wyrazu litery ktore sa polozone na plansze jako nowe
+				newWord = newWord.replace(letter, "");
 				i += nextI;
 			}
+			
+			//doliczenie punktow za litery ktore juz lezaly na planszy
+			for (int ii=0; ii<newWord.length(); ii++){
+				String letter2 = newWord.substring(ii, ii+1);
+				points += bag.returnPointsOfLetter(letter2);
+			}
+			
 			if (wordDoubleBonus) {
 				points = points * 2;
 			}
@@ -334,32 +351,24 @@ public class MainWindowController {
 			}
 			String out = "POINTS ";
 			if (isServer) {
-				player2.setPoints(player2.getPoints() + points); // policz
-																	// punkty
-																	// dla
-																	// przeciwnika
-																	// i mu je
-																	// wyslij
+				// policz punkty dla przeciwnika i mu je wyslij
+				player2.setPoints(player2.getPoints() + points);
 				Platform.runLater(() -> {
 					labelPlayer2Points.setText(player2.getPoints() + " punktów");
 				});
-				out = out + String.valueOf(player2.getPoints());
+				out = out + String.valueOf(points);
 				try {
 					serverApp.getConnection().send(out);
 				} catch (Exception e) {
 					textarea.appendText("Failed to send \n");
 				}
 			} else {
-				player1.setPoints(player1.getPoints() + points); // policz
-																	// punkty
-																	// dla
-																	// przeciwnika
-																	// i mu je
-																	// wyslij
+				// policz punkty dla przeciwnika i mu je wyslij
+				player1.setPoints(player1.getPoints() + points);
 				Platform.runLater(() -> {
 					labelPlayer1Points.setText(player1.getPoints() + " punktów");
 				});
-				out = out + String.valueOf(player1.getPoints());
+				out = out + String.valueOf(points);
 				try {
 					clientApp.getConnection().send(out);
 				} catch (Exception e) {
@@ -369,15 +378,15 @@ public class MainWindowController {
 			enableTextFields();
 			game.setAnotherPlayerTurn();
 		} else {
-			removeNewWordFromBoard(newWord);
-			rejectNewWord(newWord);
+			removeNewLettersFromBoard(newLetters);
+			rejectNewLetters(newLetters);
 		}
 	}
 
 	public void rejectWordAction(String message) {
 		String modifiedMessage = message.replace("REJECTWORD,", "");
 		textarea.appendText("Przeciwnik nie zaakceptował słowa: " + game.decryptMessage(modifiedMessage) + "\n");
-		removeNewWordFromBoard(modifiedMessage);
+		removeNewLettersFromBoard(modifiedMessage);
 		game.setAnotherPlayerTurn();
 		enableTextFields();
 	}
@@ -616,7 +625,7 @@ public class MainWindowController {
 		}
 	}
 
-	private void removeNewWordFromBoard(String message) {
+	private void removeNewLettersFromBoard(String message) {
 		game.getBoard().addNewWordToStringBoard(message);
 		Scanner in = new Scanner(message).useDelimiter(",");
 
@@ -626,7 +635,7 @@ public class MainWindowController {
 		}
 	}
 
-	private void rejectNewWord(String message) {
+	private void rejectNewLetters(String message) {
 
 		StringBuilder out = new StringBuilder();
 		out.append("REJECTWORD,").append(message);
@@ -642,18 +651,18 @@ public class MainWindowController {
 		disableTextFields();
 	}
 
-	public boolean isWordValid(String message) {
+	public boolean isWordValid(String newLetters, String newWord) {
 		boolean answer = false;
-		colorNewWords(message);
+		colorNewWords(newLetters);
 		final FutureTask query = new FutureTask(new Callable<Boolean>() {
 
 			@Override
 			public Boolean call() throws Exception {
 				Boolean answer = new Boolean(false);
 				Alert alert = new Alert(AlertType.CONFIRMATION);
-				alert.setTitle("Drugi gracz zaproponował nowe słowo");
-				alert.setHeaderText("Drugi gracz zaproponował nowe słowo. Sprawdz czy może je dodać.");
-				alert.setContentText("Nowe słowo znajdziesz na planszy");
+				alert.setTitle("Przeciwnik zaproponował nowe słowo");
+				alert.setHeaderText("Przeciwnik zaproponował nowe słowo. Sprawdz czy może je dodać.");
+				alert.setContentText("Nowe słowo: " + newWord);
 				// alert.initOwner(primaryStage);
 				alert.initModality(Modality.APPLICATION_MODAL);
 
@@ -666,18 +675,17 @@ public class MainWindowController {
 				Optional<ButtonType> result = alert.showAndWait();
 
 				if (result.get() == buttonConfirm) {
-					decolorNewLetters(message);
+					decolorNewLetters(newLetters);
 					return answer.TRUE;
 				} else if (result.get() == buttonReject) {
-					decolorNewLetters(message);
+					decolorNewLetters(newLetters);
 					// removeNewWordFromBoard(message);
 					return answer.FALSE;
 				} else {
-					decolorNewLetters(message);
+					decolorNewLetters(newLetters);
 					return answer.FALSE;
 				}
 			}
-
 		});
 
 		Platform.runLater(query);

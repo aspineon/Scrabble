@@ -5,57 +5,35 @@ import java.util.Scanner;
 public class ScrabbleBoard {
 
 	private String[][] stringCurrentBoard = new String[15][15];
-	private int[][] letterFactor = new int[][] { 
-		{ 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 }, 
-		{ 1, 1, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1 },
-		{ 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1 },
-		{ 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2 },
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-		{ 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1 },
-		{ 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1 },
-		{ 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 },
-		{ 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1 },
-		{ 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1 },
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-		{ 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2 },
-		{ 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1 },
-		{ 1, 1, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1 },
-		{ 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 }, 
-		};
-	private boolean[][] letterFactorUsed = new boolean[15][15];
-		
-	private int[][] wordFactor = new int[][] { 
-		{ 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3 }, 
-		{ 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1 }, 
-		{ 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1 }, 
-		{ 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 }, 
-		{ 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1 }, 
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
-		{ 3, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 3 }, 
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
-		{ 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1 }, 
-		{ 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 }, 
-		{ 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1 }, 
-		{ 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1 }, 
-		{ 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3 }, 
-			};	
-	private boolean[][] wordFactorUsed = new boolean[15][15];	
+	private String[][] tempBoard;
+	private int[][] letterFactor = new int[][] { { 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 },
+			{ 1, 1, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1 },
+			{ 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2 }, { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1 }, { 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1 },
+			{ 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 }, { 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1 },
+			{ 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 1 }, { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2 }, { 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1 }, { 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 }, };
+
+	private int[][] wordFactor = new int[][] { { 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3 },
+			{ 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1 }, { 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1 },
+			{ 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 }, { 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 3, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 3 }, { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1 },
+			{ 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1 }, { 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1 },
+			{ 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1 }, { 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3 }, };
 
 	public ScrabbleBoard() {
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
 				this.stringCurrentBoard[i][j] = "";
-				this.letterFactorUsed[i][j] = false;
-				this.wordFactorUsed[i][j] = false;
 			}
 		}
 	}
 
-	public String getNewWordFromBoard(String[][] newBoard) {
-
-		String[][] tempBoard = newBoard;
+	public String getNewLettersFromBoard(String[][] newBoard) {
+		tempBoard = newBoard;
 
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
@@ -66,6 +44,7 @@ public class ScrabbleBoard {
 			}
 		}
 
+		// wyslij nowe literki
 		StringBuilder out = new StringBuilder();
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
@@ -76,6 +55,117 @@ public class ScrabbleBoard {
 		}
 		out.deleteCharAt(out.length() - 1);
 		return out.toString();
+	}
+
+	public String getNewWordFromBoard(String[][] newBoard) {
+		
+		int iIndex = 0; // znajdz pierwsza literke
+		int jIndex = 0; // znajdz pierwsza literke
+		outerloop: for (iIndex = 0; iIndex < 15; iIndex++) {
+			for (jIndex = 0; jIndex < 15; jIndex++) {
+				if (!tempBoard[iIndex][jIndex].equals("")) {
+					break outerloop;
+				}
+			}
+		}
+
+		// sprawdz czy slowo jest horyzonatlne czy wertykalne
+		boolean isHorizontal = false;
+		if ((jIndex + 1 > 14 && stringCurrentBoard[iIndex][jIndex - 1].equals("")) || (jIndex - 1 < 0 && stringCurrentBoard[iIndex][jIndex + 1].equals(""))) { 
+			isHorizontal = false;
+		} else if ((jIndex + 1 > 14 && !stringCurrentBoard[iIndex][jIndex - 1].equals("")) || (jIndex - 1 < 0 && !stringCurrentBoard[iIndex][jIndex + 1].equals(""))){
+			isHorizontal = true;
+		} else if ((iIndex + 1 > 14 && stringCurrentBoard[iIndex-1][jIndex].equals("")) || (iIndex - 1 < 0 && stringCurrentBoard[iIndex+1][jIndex].equals(""))) {
+			isHorizontal = true;
+		} else if ((iIndex + 1 > 14 && !stringCurrentBoard[iIndex-1][jIndex].equals("")) || (iIndex - 1 < 0 && !stringCurrentBoard[iIndex+1][jIndex].equals(""))) {
+			isHorizontal = false;
+		}else {
+			// sprawdz czy wpisano jedna literke
+			if (tempBoard[iIndex][jIndex - 1].equals("") && tempBoard[iIndex][jIndex + 1].equals("")
+					&& tempBoard[iIndex + 1][jIndex].equals("") && tempBoard[iIndex - 1][jIndex].equals("")) {
+				if (!stringCurrentBoard[iIndex][jIndex + 1].equals("")
+						|| !stringCurrentBoard[iIndex][jIndex - 1].equals("")) {
+					isHorizontal = true;
+				} else {
+					isHorizontal = false;
+				}
+			} else if (!tempBoard[iIndex][jIndex + 1].equals("") || !tempBoard[iIndex][jIndex - 1].equals("")) {
+				isHorizontal = true;
+			} else {
+				isHorizontal = false;
+			}
+		}
+
+		int newWordLength = 0;
+		StringBuilder wholeWord = new StringBuilder();
+		if (isHorizontal) {
+			// ustal indeks pierwszej litery
+			for (int i = 0; i < 15; i++) {
+				jIndex--;
+				if (jIndex < 0) {
+					jIndex++;
+					break;
+				} else {
+					if (stringCurrentBoard[iIndex][jIndex].equals("")) {
+						jIndex++;
+						break;
+					}
+				}
+			}
+			// ustal dlugosc calego nowego slowa
+			for (int i = 0; i < 15; i++) {
+				if (!stringCurrentBoard[iIndex][jIndex].equals("")) {
+					newWordLength++;
+					jIndex++;
+					if (jIndex > 14) {
+						jIndex -= newWordLength;
+						break;
+					}
+				} else {
+					jIndex -= newWordLength;
+					break;
+				}
+			}
+
+			// wypisz cale slowo
+			for (int i = jIndex; i < jIndex + newWordLength; i++) {
+				wholeWord.append(stringCurrentBoard[iIndex][i]);
+			}
+		} else {
+			// ustal indeks pierwszej litery
+			for (int i = 0; i < 15; i++) {
+				iIndex--;
+				if (iIndex < 0) {
+					iIndex++;
+					break;
+				} else {
+					if (stringCurrentBoard[iIndex][jIndex].equals("")) {
+						iIndex++;
+						break;
+					}
+				}
+			}
+			// ustal dlugosc calego nowego slowa
+			for (int i = 0; i < 15; i++) {
+				if (!stringCurrentBoard[iIndex][jIndex].equals("")) {
+					newWordLength++;
+					iIndex++;
+					if (iIndex > 14) {
+						iIndex -= newWordLength;
+						break;
+					}
+				} else {
+					iIndex -= newWordLength;
+					break;
+				}
+			}
+
+			// wypisz cale slowo
+			for (int i = iIndex; i < iIndex + newWordLength; i++) {
+				wholeWord.append(stringCurrentBoard[i][jIndex]);
+			}
+		}
+		return wholeWord.toString();
 	}
 
 	public void addNewWordToStringBoard(String word) {
@@ -98,16 +188,8 @@ public class ScrabbleBoard {
 		return letterFactor;
 	}
 
-	public boolean[][] getLetterFactorUsed() {
-		return letterFactorUsed;
-	}
-
 	public int[][] getWordFactor() {
 		return wordFactor;
-	}
-
-	public boolean[][] getWordFactorUsed() {
-		return wordFactorUsed;
 	}
 
 }
