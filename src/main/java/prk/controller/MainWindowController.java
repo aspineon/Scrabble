@@ -141,10 +141,7 @@ public class MainWindowController {
 			currentPlayer = player2;
 		}
 		
-		
-
 		if (currentPlayer.isMyTurn()) {
-			
 			if (textFieldBoard.get(7).get(7).getText().trim().isEmpty()){
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Brak litery na środku planszy!");
@@ -169,7 +166,6 @@ public class MainWindowController {
 		} else {
 			textarea.appendText("Czekaj na swoją kolej! \n");
 		}
-
 	}
 
 	public void getMessage(String message) {
@@ -793,7 +789,7 @@ public class MainWindowController {
 	public void disableTextFields() {
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
-				textFieldBoard.get(j).get(i).setEditable(false);
+				textFieldBoard.get(i).get(j).setDisable(true);;
 			}
 		}
 	}
@@ -801,7 +797,36 @@ public class MainWindowController {
 	public void enableTextFields() {
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
-				textFieldBoard.get(j).get(i).setEditable(true);
+				if(!textFieldBoard.get(i).get(j).getText().trim().isEmpty()){
+					textFieldBoard.get(i).get(j).setDisable(true);
+				} else {
+					for (int k = 1; k < 8; k++){
+						if(i-k>0){
+							if(!textFieldBoard.get(i-k).get(j).getText().trim().isEmpty()){
+								textFieldBoard.get(i).get(j).setDisable(false);
+								break;
+							}	
+						}
+						if(j-k>0){
+							if(!textFieldBoard.get(i).get(j-k).getText().trim().isEmpty()){
+								textFieldBoard.get(i).get(j).setDisable(false);
+								break;
+							}	
+						}
+						if(i+k<15){
+							if(!textFieldBoard.get(i+k).get(j).getText().trim().isEmpty()){
+								textFieldBoard.get(i).get(j).setDisable(false);
+								break;
+							}	
+						}
+						if (j+k<15){
+							if(!textFieldBoard.get(i).get(j+k).getText().trim().isEmpty()){
+								textFieldBoard.get(i).get(j).setDisable(false);
+								break;
+							}
+						}	
+					}
+				}
 			}
 		}
 	}
