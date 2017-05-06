@@ -114,7 +114,10 @@ public class MainWindowController {
 		}
 		labelLetters.setText(letters.toString());
 		labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
+		this.enableStartingTextFields();
 	}
+
+	
 
 	public void setClientApp(ClientApp app, Stage primaryStage) {
 		this.clientApp = app;
@@ -126,6 +129,7 @@ public class MainWindowController {
 		player2 = game.getPlayer2();
 		bag = game.getBag();
 		board = game.getBoard();
+		this.enableStartingTextFields();
 	}
 
 	public void confirm() {
@@ -750,6 +754,8 @@ public class MainWindowController {
 		;
 		return answer;
 	}
+	
+	
 
 	private void colorNewWords(String message) {
 		Scanner in = new Scanner(message).useDelimiter(",");
@@ -788,6 +794,12 @@ public class MainWindowController {
 				textFieldBoard.get(j).get(i).setEditable(true);
 			}
 		}
+	}
+	
+	private void enableStartingTextFields() {
+		
+		for (int i= 1; i<14; i++) textFieldBoard.get(7).get(i).setDisable(false);
+		for (int i= 1; i<14; i++) textFieldBoard.get(i).get(7).setDisable(false);
 	}
 	
 	public String[] convertNewWordToStringArray(){
