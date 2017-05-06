@@ -140,21 +140,31 @@ public class MainWindowController {
 		} else {
 			currentPlayer = player2;
 		}
+		
+		
 
 		if (currentPlayer.isMyTurn()) {
-			String letters = game.getBoard().getNewLettersFromBoard(convertTextFieldToString());
-			String wholeWord = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
-			String message = "NEWWORD " + letters + " " + wholeWord;
-			textarea.appendText(message + "\n");
-			disableTextFields();
-			game.setAnotherPlayerTurn();
-			try {
-				if (this.isServer) {
-					serverApp.getConnection().send(message);
-				} else
-					clientApp.getConnection().send(message);
-			} catch (Exception e) {
-				textarea.appendText("Failed to send \n");
+			
+			if (textFieldBoard.get(7).get(7).getText().trim().isEmpty()){
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Brak litery na środku planszy!");
+				alert.setHeaderText("Pierszwy wyraz zawsze musi mieć zawsze literę na środku planszy!");
+				alert.showAndWait();
+			} else {
+				String letters = game.getBoard().getNewLettersFromBoard(convertTextFieldToString());
+				String wholeWord = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
+				String message = "NEWWORD " + letters + " " + wholeWord;
+				textarea.appendText(message + "\n");
+				disableTextFields();
+				game.setAnotherPlayerTurn();
+				try {
+					if (this.isServer) {
+						serverApp.getConnection().send(message);
+					} else
+						clientApp.getConnection().send(message);
+				} catch (Exception e) {
+					textarea.appendText("Failed to send \n");
+				}
 			}
 		} else {
 			textarea.appendText("Czekaj na swoją kolej! \n");
