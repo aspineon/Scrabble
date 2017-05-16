@@ -1,9 +1,7 @@
 package prk.model;
 
-import javafx.beans.NamedArg;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import prk.controller.MainWindowController;
+
 
 public class TextFieldLimited extends TextField {
 

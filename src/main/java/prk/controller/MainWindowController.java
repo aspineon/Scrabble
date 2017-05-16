@@ -658,8 +658,7 @@ public class MainWindowController {
 			}
 		}
 
-	}
-
+}
 	public String[][] convertTextFieldToString() {
 		String[][] tempBoard = new String[15][15];
 		for (int i = 0; i < 15; i++) {
