@@ -32,6 +32,7 @@ public class ScrabbleBoard {
 		}
 	}
 
+	/**@author Wojciech Krzywiec */
 	public String getNewLettersFromBoard(String[][] newBoard) {
 		tempBoard = newBoard;
 
@@ -57,6 +58,7 @@ public class ScrabbleBoard {
 		return out.toString();
 	}
 
+	/** @author Wojciech Krzywiec */
 	public String getNewWordFromBoard(String[][] newBoard) {
 		
 		int iIndex = 0; // znajdz pierwsza literke
@@ -168,6 +170,7 @@ public class ScrabbleBoard {
 		return wholeWord.toString();
 	}
 
+	/**@author Wojciech Krzywiec */
 	public void addNewWordToStringBoard(String word) {
 		Scanner in = new Scanner(word).useDelimiter(",");
 

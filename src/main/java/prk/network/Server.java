@@ -3,6 +3,8 @@ package prk.network;
 import java.io.Serializable;
 import java.util.function.Consumer;
 
+/**@author Maciej Gawlowski */
+
 public class Server extends NetworkConnection {
 	private int port;
 	

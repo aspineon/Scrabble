@@ -16,6 +16,8 @@ import prk.model.ScrabblePlayer;
 import prk.network.Client;
 import prk.network.NetworkConnection;
 
+/**@author Maciej Gawlowski */
+
 public class ClientApp extends Application {
 
 	private MainWindowController mainWindowController;

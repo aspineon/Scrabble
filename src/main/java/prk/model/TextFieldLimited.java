@@ -2,6 +2,7 @@ package prk.model;
 
 import javafx.scene.control.TextField;
 
+/**@author Wojciech Krzywiec */
 
 public class TextFieldLimited extends TextField {
 

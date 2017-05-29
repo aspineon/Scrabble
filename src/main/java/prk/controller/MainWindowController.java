@@ -96,7 +96,8 @@ public class MainWindowController {
 	@FXML
 	private TextFieldLimited txt14_00, txt14_01, txt14_02, txt14_03, txt14_04, txt14_05, txt14_06, txt14_07, txt14_08,
 			txt14_09, txt14_10, txt14_11, txt14_12, txt14_13, txt14_14;
-
+	
+	/**@author Maciej Gawlowski */
 	public void setServerApp(ServerApp app, Stage primaryStage) {
 		this.serverApp = app;
 		this.primaryStage = primaryStage;
@@ -118,7 +119,7 @@ public class MainWindowController {
 	}
 
 	
-
+	/**@author Maciej Gawlowski */
 	public void setClientApp(ClientApp app, Stage primaryStage) {
 		this.clientApp = app;
 		this.primaryStage = primaryStage;
@@ -131,7 +132,8 @@ public class MainWindowController {
 		board = game.getBoard();
 		this.enableStartingTextFields();
 	}
-
+	/**@author Maciej Gawlowski
+	 * @author Wojciech Krzywiec */
 	public void confirm() {
 
 		ScrabblePlayer currentPlayer;
@@ -168,6 +170,8 @@ public class MainWindowController {
 		}
 	}
 
+	/**@author Maciej Gawlowski
+	 * @author Wojciech Krzywiec */
 	public void getMessage(String message) {
 
 		if (isServer) {
@@ -262,6 +266,7 @@ public class MainWindowController {
 		}
 	}
 
+	/**@author Maciej Gawlowski */
 	public void getPointsAction(String message, boolean isServer) {
 		String points = message.substring(7);
 		disableTextFields();
@@ -278,6 +283,7 @@ public class MainWindowController {
 		}
 	}
 
+	/**@author Maciej Gawlowski */
 	public void newWordAction(String message, boolean isServer) {
 		// utnij napis newword
 		String newLetters = message.substring(8);
@@ -394,6 +400,7 @@ public class MainWindowController {
 		}
 	}
 
+	/** @author Wojciech Krzywiec */
 	public void rejectWordAction(String message) {
 		String modifiedMessage = message.replace("REJECTWORD,", "");
 		textarea.appendText("Przeciwnik nie zaakceptował słowa: " + game.decryptMessage(modifiedMessage) + "\n");
@@ -401,7 +408,7 @@ public class MainWindowController {
 		game.setAnotherPlayerTurn();
 		enableTextFields();
 	}
-
+	/**@author Maciej Gawlowski */
 	public void newLettersAction(String message, boolean isServer) {
 		if (isServer) {
 			textarea.appendText("Gracz 2 wymienił litery, kolej Gracza 1" + "\n");
@@ -430,13 +437,14 @@ public class MainWindowController {
 		game.setAnotherPlayerTurn();
 		;
 	}
-
+	/**@author Maciej Gawlowski */
 	public void leaveTurnAction(String message) {
 		textarea.appendText(message.substring(10) + "\n");
 		enableTextFields();
 		game.setAnotherPlayerTurn();
 	}
-
+	
+	/**@author Maciej Gawlowski */
 	public void changeLetters() {
 		// ustalenie kto nacisnął przycisk, aby nie powielać kodu
 		ScrabblePlayer currentPlayer;
@@ -503,7 +511,7 @@ public class MainWindowController {
 		}
 		disableTextFields();
 	}
-
+	/**@author Maciej Gawlowski */
 	public void leaveTurn() {
 		if (this.isServer) {
 			if (player1.isMyTurn()) {
@@ -534,7 +542,7 @@ public class MainWindowController {
 		}
 		disableTextFields();
 	}
-
+	/** @author Wojciech Krzywiec */
 	public void checkLetter(KeyEvent event) {
 
 		if (!event.isAltDown()) {
@@ -659,6 +667,7 @@ public class MainWindowController {
 		}
 
 }
+	/** @author Wojciech Krzywiec */
 	public String[][] convertTextFieldToString() {
 		String[][] tempBoard = new String[15][15];
 		for (int i = 0; i < 15; i++) {
@@ -674,7 +683,7 @@ public class MainWindowController {
 		}
 		return tempBoard;
 	}
-
+	/** @author Wojciech Krzywiec */
 	public void addNewWordToBoard(String message) {
 
 		game.getBoard().addNewWordToStringBoard(message);
@@ -684,7 +693,7 @@ public class MainWindowController {
 			textFieldBoard.get(in.nextInt()).get(in.nextInt()).setText(in.next());
 		}
 	}
-
+	/** @author Wojciech Krzywiec */
 	private void removeNewLettersFromBoard(String message) {
 		game.getBoard().addNewWordToStringBoard(message);
 		Scanner in = new Scanner(message).useDelimiter(",");
@@ -694,7 +703,7 @@ public class MainWindowController {
 			in.next();
 		}
 	}
-
+	/**@author Wojciech Krzywiec */
 	private void rejectNewLetters(String message) {
 
 		StringBuilder out = new StringBuilder();
@@ -710,7 +719,7 @@ public class MainWindowController {
 		}
 		disableTextFields();
 	}
-
+	/** @author Wojciech Krzywiec */
 	public boolean isWordValid(String newLetters, String newWord) {
 		boolean answer = false;
 		colorNewWords(newLetters);
@@ -760,8 +769,7 @@ public class MainWindowController {
 		return answer;
 	}
 	
-	
-
+	/** @author Wojciech Krzywiec */
 	private void colorNewWords(String message) {
 		Scanner in = new Scanner(message).useDelimiter(",");
 		StringBuilder out = new StringBuilder();
@@ -773,6 +781,7 @@ public class MainWindowController {
 		}
 	}
 
+	/** @author Wojciech Krzywiec */
 	private void decolorNewLetters(String message) {
 		Scanner in = new Scanner(message).useDelimiter(",");
 		StringBuilder out = new StringBuilder();
@@ -785,6 +794,7 @@ public class MainWindowController {
 
 	}
 
+	/** @author Wojciech Krzywiec */
 	public void disableTextFields() {
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
@@ -792,7 +802,7 @@ public class MainWindowController {
 			}
 		}
 	}
-
+	/**@author Wojciech Krzywiec */
 	public void enableTextFields() {
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
@@ -830,12 +840,13 @@ public class MainWindowController {
 		}
 	}
 	
+	/**@author Wojciech Krzywiec */
 	private void enableStartingTextFields() {
 		
 		for (int i= 1; i<14; i++) textFieldBoard.get(7).get(i).setDisable(false);
 		for (int i= 1; i<14; i++) textFieldBoard.get(i).get(7).setDisable(false);
 	}
-	
+	/** @author Wojciech Krzywiec */
 	public String[] convertNewWordToStringArray(){
 		String[] newWordArray = new String[7];
 		int count = 0;
@@ -866,6 +877,7 @@ public class MainWindowController {
 		return newWordArray;
 	}
 
+	/**@author Maciej Gawlowski */
 	public void confirmConnection() throws Exception {
 		clientApp.getConnection().send("Gracz 2 się połączył");
 	}
