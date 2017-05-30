@@ -149,6 +149,8 @@ public class MainWindowController {
 				alert.setTitle("Brak litery na środku planszy!");
 				alert.setHeaderText("Pierszwy wyraz zawsze musi mieć zawsze literę na środku planszy!");
 				alert.showAndWait();
+			} else if(isNewWordNextToExisting()){
+				
 			} else {
 				String letters = game.getBoard().getNewLettersFromBoard(convertTextFieldToString());
 				String wholeWord = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
@@ -169,6 +171,7 @@ public class MainWindowController {
 			textarea.appendText("Czekaj na swoją kolej! \n");
 		}
 	}
+
 
 	/**@author Maciej Gawlowski
 	 * @author Wojciech Krzywiec */
@@ -545,7 +548,7 @@ public class MainWindowController {
 	/** @author Wojciech Krzywiec */
 	public void checkLetter(KeyEvent event) {
 
-		if (!event.isAltDown()) {
+		if (!event.isAltDown() && event.getCode() != KeyCode.DELETE && event.getCode() != KeyCode.BACK_SPACE) {
 
 			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
 			String letter = textfield.getText();
@@ -876,6 +879,13 @@ public class MainWindowController {
 		}
 		return newWordArray;
 	}
+	
+
+	private boolean isNewWordNextToExisting() {
+		
+		return false;
+	}
+
 
 	/**@author Maciej Gawlowski */
 	public void confirmConnection() throws Exception {

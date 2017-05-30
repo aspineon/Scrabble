@@ -40,6 +40,7 @@ public class ServerApp extends Application {
 		scene.getStylesheets().add("/prk/view/mainWindow.css");
 		primaryStage.setMinHeight(560);
 		primaryStage.setMinWidth(800);
+		primaryStage.setResizable(false);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Scrabble: Gracz 1");
 		primaryStage.show();
