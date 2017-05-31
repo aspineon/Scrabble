@@ -149,8 +149,11 @@ public class MainWindowController {
 				alert.setTitle("Brak litery na środku planszy!");
 				alert.setHeaderText("Pierszwy wyraz zawsze musi mieć zawsze literę na środku planszy!");
 				alert.showAndWait();
-			} else if(isNewWordNextToExisting()){
-				
+			} else if(!isNewWordNextToExisting()){
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Nowe słowo nie przylega do już istniejących!");
+				alert.setHeaderText("Każde nowe słowo musi mieć choć jedną wspólną literę z już podanymi oraz musi do nich przylegać!");
+				alert.showAndWait();
 			} else {
 				String letters = game.getBoard().getNewLettersFromBoard(convertTextFieldToString());
 				String wholeWord = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
@@ -867,7 +870,7 @@ public class MainWindowController {
 		}
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
-				if (!tempBoard[i][j].equals((game.getBoard().getStringCurrentBoard()[i][j]))) {
+				if (!tempBoard[i][j].equals((game.getBoard().getCurrentStringBoard()[i][j]))) {
 					newWordArray[count] = tempBoard[i][j];
 					count++;
 				}
@@ -880,10 +883,28 @@ public class MainWindowController {
 		return newWordArray;
 	}
 	
-
+	/** @author Wojciech Krzywiec */
 	private boolean isNewWordNextToExisting() {
-		
-		return false;
+		boolean wordIsNextToExisiting = false;
+		String[][] currentBoard = this.convertTextFieldToString();
+		String[][] previousBoard = board.getCurrentStringBoard();
+		checkBoard:
+		for (int i = 1; i < 14; i++) {
+			for (int j = 1; j < 14; j++) {
+				if (!currentBoard[i][j].equals("") && previousBoard[i][j].equals("")){
+					if (!previousBoard[i+1][j].equals("") || !previousBoard[i][j+1].equals("") 
+							|| !previousBoard[i-1][j].equals("") || !previousBoard[i][j-1].equals("")){
+						wordIsNextToExisiting = true;
+						break checkBoard;
+					}	
+				}
+			}
+		}
+		if (previousBoard[7][7].equals("")){
+			wordIsNextToExisiting = true;
+		}
+		System.out.println("czy jest koło słowa: " + wordIsNextToExisiting);
+		return wordIsNextToExisiting;
 	}
 
 

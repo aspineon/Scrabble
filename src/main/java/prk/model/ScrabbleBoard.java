@@ -58,7 +58,8 @@ public class ScrabbleBoard {
 		return out.toString();
 	}
 
-	/** @author Wojciech Krzywiec */
+	/** @author Wojciech Krzywiec
+	 * @author Maciej Gawlowski */
 	public String getNewWordFromBoard(String[][] newBoard) {
 		
 		int iIndex = 0; // znajdz pierwsza literke
@@ -179,7 +180,7 @@ public class ScrabbleBoard {
 		in.close();
 	}
 
-	public String[][] getStringCurrentBoard() {
+	public String[][] getCurrentStringBoard() {
 		return stringCurrentBoard;
 	}
 
