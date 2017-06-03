@@ -304,8 +304,11 @@ public class MainWindowController {
 			for (int i = 0; i < player1.getLetters().length; i++) {
 				System.out.println(player1.getLetters()[i]);
 			}
-	
-			labelLetters.setText(player1.getLabelLetters());
+			Platform.runLater(
+					() -> {
+						labelLetters.setText(player1.getLabelLetters());
+					  }
+			);
 		} else {
 			for (int i = 0; i < player2.getLetters().length; i++) {
 				if (player2.getLetters()[i].equals("")){
@@ -318,7 +321,11 @@ public class MainWindowController {
 				System.out.println(player2.getLetters()[i]);
 			}
 
-			labelLetters.setText(player2.getLabelLetters());
+			Platform.runLater(
+					() -> {
+						labelLetters.setText(player2.getLabelLetters());
+					  }
+			);
 		}
 	}
 
