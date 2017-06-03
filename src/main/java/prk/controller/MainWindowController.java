@@ -152,7 +152,7 @@ public class MainWindowController {
 			} else if(!isNewWordNextToExisting()){
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Nowe słowo nie przylega do już istniejących!");
-				alert.setHeaderText("Każde nowe słowo musi mieć choć jedną wspólną literę z już podanymi oraz musi do nich przylegać!");
+				alert.setHeaderText("Każde nowe słowo musi mieć choć   jedną wspólną literę z już podanymi oraz musi do nich przylegać!");
 				alert.showAndWait();
 			} else {
 				String letters = game.getBoard().getNewLettersFromBoard(convertTextFieldToString());
@@ -215,7 +215,8 @@ public class MainWindowController {
 				newWordAction(message, true);
 			} else if (message.matches("POINTS \\d*")) {
 				getPointsAction(message, true);
-			}
+				getAdditionalLettersFromBag();
+			}//tutaj trzeba bedzie jeszzcze obsluzyc jedna wiadomość - literki ktore sa w zabrane z worka przez innego gracza
 		} else {
 			if (message.matches("WELCOMELETTERS \\D* \\d*")) {
 				textarea.appendText("Gracz 1 się połączył" + "\n");
@@ -268,9 +269,59 @@ public class MainWindowController {
 				newWordAction(message, false);
 			} else if (message.matches("POINTS \\d*")) {
 				getPointsAction(message, false);
-			}
+				getAdditionalLettersFromBag();
+			}//tutaj trzeba bedzie jeszzcze obsluzyc jedna wiadomość - literki ktore sa w zabrane z worka przez innego gracza
 		}
 	}
+
+	/**@author Wojciech Krzywiec */
+	private void getAdditionalLettersFromBag() {
+		//tutaj trzeba bedzie pobrac tablice liter z klasy scrabbleplayer i sprawdzic co brakuje "", pobrac z worka brakujace litery, dodac litery do labelki oraz przeslac literki do drugiego gracza
+		int count = 0;
+		if (isServer){
+			for (int i = 0; i < player1.getLetters().length; i++) {
+				if (player1.getLetters()[i].equals("")) {
+					count++;
+				}
+			}
+		} else {
+			for (int i = 0; i < player2.getLetters().length; i++) {
+				if (player2.getLetters()[i].equals("")) {
+					count++;
+				}
+			}
+		}
+		String lettersFromBag[] = bag.randomLetters(count);
+		int j = 0;
+		if (isServer){
+			for (int i = 0; i < player1.getLetters().length; i++) {
+					if (player1.getLetters()[i].equals("")){
+						player1.getLetters()[i] = lettersFromBag[j];
+						j++;
+					}
+			}
+			
+			for (int i = 0; i < player1.getLetters().length; i++) {
+				System.out.println(player1.getLetters()[i]);
+			}
+	
+			labelLetters.setText(player1.getLabelLetters());
+		} else {
+			for (int i = 0; i < player2.getLetters().length; i++) {
+				if (player2.getLetters()[i].equals("")){
+					player2.getLetters()[i] = lettersFromBag[j];
+					j++;
+				}
+		}
+			
+			for (int i = 0; i < player2.getLetters().length; i++) {
+				System.out.println(player2.getLetters()[i]);
+			}
+
+			labelLetters.setText(player2.getLabelLetters());
+		}
+	}
+
 
 	/**@author Maciej Gawlowski */
 	public void getPointsAction(String message, boolean isServer) {
@@ -398,12 +449,19 @@ public class MainWindowController {
 					textarea.appendText("Failed to send \n");
 				}
 			}
+			StringBuilder lettersFromBag = new StringBuilder("ADDLETTER ");
+			if (isServer) {
+				
+			} else{
+				
+			}
 			enableTextFields();
 			game.setAnotherPlayerTurn();
 		} else {
 			removeNewLettersFromBoard(newLetters);
 			rejectNewLetters(newLetters);
 		}
+		
 	}
 
 	/** @author Wojciech Krzywiec */
@@ -615,25 +673,12 @@ public class MainWindowController {
 			String[] currentBoard = convertNewWordToStringArray();
 			Arrays.sort(currentBoard, Collections.reverseOrder());
 			
-			System.out.println("currentBoard: [");
-			for (int i =0; i<currentBoard.length; i++){
-				System.out.print(currentBoard[i] +", ");
-			}
-			System.out.println("]");
-			
 			if (isServer){
 				String[] usedLetters = player1.getUsedLetters();
 				Arrays.sort(usedLetters, Collections.reverseOrder());
 				
-				System.out.println("usedLetters: [");
-				for (int i =0; i<usedLetters.length; i++){
-					System.out.print(usedLetters[i] +", ");
-				}
-				System.out.println("]");
-				
 				checkingForUsedLetter:
 				for (int i = 0; i < usedLetters.length; i++) {
-					System.out.println(i + "Sprawdzenie czy to ta literka");
 					if (usedLetters[i]!= "" && !usedLetters[i].equals(currentBoard[i])){
 						for (int j=0; j < usedLetters.length; j++)	{
 							if (player1.getLetters()[j]== "" && usedLetters[i]!= ""){
@@ -649,15 +694,8 @@ public class MainWindowController {
 				String[] usedLetters = player2.getUsedLetters();
 				Arrays.sort(usedLetters, Collections.reverseOrder());
 				
-				System.out.print("usedLetters: [");
-				for (int i =0; i<usedLetters.length; i++){
-					System.out.print(usedLetters[i] +", ");
-				}
-				System.out.println("]");
-				
 				checkingForUsedLetter:
 				for (int i = 0; i < usedLetters.length; i++) {
-					System.out.println(i + "Sprawdzenie czy to ta literka");
 					if (usedLetters[i]!= "" && !usedLetters[i].equals(currentBoard[i])){
 						for (int j=0; j < player2.getLetters().length; j++)	{
 							if (player2.getLetters()[j]== "" && usedLetters[i]!= ""){
@@ -903,7 +941,6 @@ public class MainWindowController {
 		if (previousBoard[7][7].equals("")){
 			wordIsNextToExisiting = true;
 		}
-		System.out.println("czy jest koło słowa: " + wordIsNextToExisiting);
 		return wordIsNextToExisiting;
 	}
 

@@ -56,6 +56,12 @@ public class ScrabblePlayer {
 		while (usedLetters[i]!="") i++;
 		usedLetters[i] = letter;
 	}
+	
+	public void addLetterFromBag(String letter) {
+		int i = 0;
+		if (!letters[i].equals("")) i++;
+		letters[i] = letter;
+	}
 
 	public String[] getUsedLetters() {
 		return usedLetters;
@@ -65,5 +71,4 @@ public class ScrabblePlayer {
 		this.usedLetters = usedLetters;
 	}
 
-	
 }
