@@ -211,6 +211,7 @@ public class MainWindowController {
 				getTextarea().appendText("Zaczyna " + getGame().getStartingPlayer() + "\n");
 			} else if (message.matches("LEAVETURN .+")) {
 				leaveTurnAction(message);
+				System.out.println("Gracz spasował");
 			} else if (message.matches("NEWLETTERS \\D*")) {
 				newLettersAction(message, true);
 			} else if ((message.matches("REJECTWORD,.+"))) {
@@ -274,6 +275,7 @@ public class MainWindowController {
 
 			} else if (message.matches("LEAVETURN .+")) {
 				this.leaveTurnAction(message);
+				System.out.println("Gracz spasował");
 			} else if (message.matches("NEWLETTERS \\D*")) {
 				this.newLettersAction(message, false);
 			} else if ((message.matches("REJECTWORD,.+"))) {
@@ -913,42 +915,59 @@ public class MainWindowController {
 	}
 	/**@author Wojciech Krzywiec */
 	public void enableTextFields() {
-		for (int i = 0; i < 15; i++) {
-			for (int j = 0; j < 15; j++) {
-				if(!textFieldBoard.get(i).get(j).getText().trim().isEmpty()){
-					textFieldBoard.get(i).get(j).setDisable(true);
-				} else {
-					for (int k = 1; k < 8; k++){
-						if(i-k>0){
-							if(!textFieldBoard.get(i-k).get(j).getText().trim().isEmpty()){
-								textFieldBoard.get(i).get(j).setDisable(false);
-								break;
-							}	
-						}
-						if(j-k>0){
-							if(!textFieldBoard.get(i).get(j-k).getText().trim().isEmpty()){
-								textFieldBoard.get(i).get(j).setDisable(false);
-								break;
-							}	
-						}
-						if(i+k<15){
-							if(!textFieldBoard.get(i+k).get(j).getText().trim().isEmpty()){
-								textFieldBoard.get(i).get(j).setDisable(false);
-								break;
-							}	
-						}
-						if (j+k<15){
-							if(!textFieldBoard.get(i).get(j+k).getText().trim().isEmpty()){
-								textFieldBoard.get(i).get(j).setDisable(false);
-								break;
+		if (this.boardIsEmpty()){
+			for (int i = 1; i < 14; i++){
+				textFieldBoard.get(i).get(7).setDisable(false);
+				textFieldBoard.get(7).get(i).setDisable(false);
+			}
+		} else {
+			for (int i = 0; i < 15; i++) {
+				for (int j = 0; j < 15; j++) {
+					if(!textFieldBoard.get(i).get(j).getText().trim().isEmpty()){
+						textFieldBoard.get(i).get(j).setDisable(true);
+					} else {
+						for (int k = 1; k < 8; k++){
+							if(i-k>0){
+								if(!textFieldBoard.get(i-k).get(j).getText().trim().isEmpty()){
+									textFieldBoard.get(i).get(j).setDisable(false);
+									break;
+								}	
 							}
-						}	
+							if(j-k>0){
+								if(!textFieldBoard.get(i).get(j-k).getText().trim().isEmpty()){
+									textFieldBoard.get(i).get(j).setDisable(false);
+									break;
+								}	
+							}
+							if(i+k<15){
+								if(!textFieldBoard.get(i+k).get(j).getText().trim().isEmpty()){
+									textFieldBoard.get(i).get(j).setDisable(false);
+									break;
+								}	
+							}
+							if (j+k<15){
+								if(!textFieldBoard.get(i).get(j+k).getText().trim().isEmpty()){
+									textFieldBoard.get(i).get(j).setDisable(false);
+									break;
+								}
+							}	
+						}
 					}
 				}
 			}
 		}
 	}
 	
+	private boolean boardIsEmpty() {
+		for (int i= 0; i<15; i++){
+			for (int j = 0; j <15; j++){
+				if (!game.getBoard().getCurrentStringBoard()[i][j].equals("")) return false;
+			}
+		}
+		return true;
+	}
+
+
 	/**@author Wojciech Krzywiec */
 	private void enableStartingTextFields() {
 		
