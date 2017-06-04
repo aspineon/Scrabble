@@ -2,7 +2,11 @@ package prk.model;
 
 import javafx.scene.control.TextField;
 
-/**@author Wojciech Krzywiec */
+/**
+ * Klasa dziedzicząca po klasie TextField, reprezentująca pola do wpisywania liter
+ * 
+ * @author Wojciech Krzywiec 
+ */
 
 public class TextFieldLimited extends TextField {
 

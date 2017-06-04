@@ -1,6 +1,11 @@
 package prk.model;
 
-/**@author Wojciech Krzywiec */
+/**
+ *
+ * Klasa reprezentująca gracza
+ * 
+ * @author Wojciech Krzywiec 
+ */
 public class ScrabblePlayer {
 	private boolean myTurn;
 	private int points;

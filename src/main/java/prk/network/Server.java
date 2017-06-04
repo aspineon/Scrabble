@@ -3,7 +3,13 @@ package prk.network;
 import java.io.Serializable;
 import java.util.function.Consumer;
 
-/**@author Maciej Gawlowski */
+/**
+ * Klasa połączenia sieciowego po stronie serwera
+ * 
+ * Klasa dziedzicząca po klasie NetworkConneciton
+ * 
+ * @author Maciej Gawlowski 
+ */
 
 public class Server extends NetworkConnection {
 	private int port;

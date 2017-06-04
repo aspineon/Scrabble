@@ -28,6 +28,10 @@ import prk.model.ScrabbleBoard;
 import prk.model.ScrabblePlayer;
 import prk.model.TextFieldLimited;
 
+/**
+ * Kontroler sterujący przebiegiem apliakcji
+ */
+
 public class MainWindowController {
 	// komentarz
 	private Stage primaryStage;

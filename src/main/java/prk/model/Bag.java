@@ -3,6 +3,9 @@ package prk.model;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * Klasa reprezentująca worek z literami
+ */
 public class Bag {
 
 	private final String[] letters = { "A", "Ą", "B", "C", "Ć", "D", "E", "Ę", "F", "G", "H", "I", "J", "K", "L", "Ł",

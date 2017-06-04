@@ -16,7 +16,11 @@ import prk.model.ScrabblePlayer;
 import prk.network.Client;
 import prk.network.NetworkConnection;
 
-/**@author Maciej Gawlowski */
+/**
+ * Klasa uruchomieniowa dla aplikacji po stronie Klienta
+ * 
+ * @author Maciej Gawlowski 
+ */
 
 public class ClientApp extends Application {
 

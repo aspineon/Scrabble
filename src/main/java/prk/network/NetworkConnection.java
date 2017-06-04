@@ -7,7 +7,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Consumer;
 
-/**@author Maciej Gawlowski */
+/**
+ * Klasa reprezentująca połączenie sieciowe
+ * 
+ * @author Maciej Gawlowski 
+ */
 public abstract class NetworkConnection {
 
 	private ConnectionThread connThread = new ConnectionThread();

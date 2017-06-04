@@ -2,6 +2,9 @@ package prk.model;
 
 import java.util.Scanner;
 
+/**
+ * Klasa reprezentująca planszę 
+ */
 public class ScrabbleBoard {
 
 	private String[][] stringCurrentBoard = new String[15][15];
