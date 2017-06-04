@@ -62,12 +62,13 @@ public class Bag {
 		return pointsOfLetters[index];
 	}
 
+	public void removeLetterFromBag(String letter) {
+		numberOfLetters[Arrays.asList(letters).indexOf(letter)]--;
+		this.lettersLeft--;
+	}
+	
 	public int[] getNumberOfLetters() {
 		return numberOfLetters;
-	}
-
-	public void setNumberOfLetters(int[] numberOfLetters) {
-		this.numberOfLetters = numberOfLetters;
 	}
 
 	public String[] getLetters() {
@@ -81,10 +82,4 @@ public class Bag {
 	public int getLettersLeft() {
 		return lettersLeft;
 	}
-
-	public void removeLetterFromBag(String letter) {
-		numberOfLetters[Arrays.asList(letters).indexOf(letter)]--;
-		this.lettersLeft--;
-	}
-
 }
