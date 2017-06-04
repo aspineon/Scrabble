@@ -14,6 +14,7 @@ public class Bag {
 	private int lettersLeft = 100;
 	private Random rand = new Random();
 
+	/**@author Maciej Gawlowski */
 	// jako parametr licba literek do wylosowania
 	public String[] randomLetters(int number) {
 		String[] randomLetters = new String[number];
@@ -30,6 +31,7 @@ public class Bag {
 		return randomLetters;
 	}
 
+	/**@author Maciej Gawlowski */
 	public void findAndSubtract(String c) {
 		int i = 0;
 		while (!String.valueOf(c).equals(letters[i])) {
@@ -41,6 +43,7 @@ public class Bag {
 		}
 	}
 
+	/**@author Maciej Gawlowski */
 	public void returnLetters(String[] returnLetters) {
 		for (String c : returnLetters) {
 			int i = 0;
@@ -52,6 +55,7 @@ public class Bag {
 		}
 	}
 
+	/**@author Maciej Gawlowski */
 	public int returnPointsOfLetter(String letter) {
 		int index = 0;
 		for (int i = 0; i < letters.length; i++) {
@@ -62,6 +66,7 @@ public class Bag {
 		return pointsOfLetters[index];
 	}
 
+	/**@author Wojciech Krzywiec */
 	public void removeLetterFromBag(String letter) {
 		numberOfLetters[Arrays.asList(letters).indexOf(letter)]--;
 		this.lettersLeft--;

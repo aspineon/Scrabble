@@ -12,6 +12,7 @@ public class Game {
 	private Bag bag;
 	private String startingPlayer;
 
+	/**@author Maciej Gawlowski */
 	public Game(boolean isServer) {
 		player1 = new ScrabblePlayer();
 		player2 = new ScrabblePlayer();
@@ -30,6 +31,7 @@ public class Game {
 		}
 	}
 
+	/**@author Maciej Gawlowski */
 	public void randomStartingPlayer() {
 		Random rand = new Random();
 		int i = rand.nextInt(2);
@@ -42,6 +44,7 @@ public class Game {
 		}
 	}
 	
+	/**@author Wojciech Krzywiec */
 	public String decryptMessage(String message){
 		Scanner in = new Scanner(message).useDelimiter(",");
 		StringBuilder out = new StringBuilder();
@@ -54,16 +57,19 @@ public class Game {
 		return out.toString();
 	}
 
+	/**@author Maciej Gawlowski */
 	public void setPlayer1Turn() {
 		player1.setMyTurn(true);
 		player2.setMyTurn(false);
 	}
 
+	/**@author Maciej Gawlowski */
 	public void setPlayer2Turn() {
 		player1.setMyTurn(false);
 		player2.setMyTurn(true);
 	}
 
+	/**@author Maciej Gawlowski */
 	public void setAnotherPlayerTurn() {
 		if (player1.isMyTurn()) {
 			player1.setMyTurn(false);

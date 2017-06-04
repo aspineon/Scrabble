@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import prk.model.Bag;
 
+/**@author Maciej Gawlowski */
+
 public class BagTest {
 	private Bag bag;
 	
