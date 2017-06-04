@@ -216,7 +216,16 @@ public class MainWindowController {
 			} else if (message.matches("POINTS \\d*")) {
 				getPointsAction(message, true);
 				getAdditionalLettersFromBag();
-			}//tutaj trzeba bedzie jeszzcze obsluzyc jedna wiadomość - literki ktore sa w zabrane z worka przez innego gracza
+			} else if (message.matches("REMOVELETTERS .+")){
+				System.out.println(message);
+				this.removeLettersFromOpponentBag(message);
+				Platform.runLater(
+						() -> {
+							labelLetters.setText(player1.getLabelLetters());
+							labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
+						  }
+				);
+			}
 		} else {
 			if (message.matches("WELCOMELETTERS \\D* \\d*")) {
 				textarea.appendText("Gracz 1 się połączył" + "\n");
@@ -260,24 +269,37 @@ public class MainWindowController {
 				}
 
 			} else if (message.matches("LEAVETURN .+")) {
-				leaveTurnAction(message);
+				this.leaveTurnAction(message);
 			} else if (message.matches("NEWLETTERS \\D*")) {
-				newLettersAction(message, false);
+				this.newLettersAction(message, false);
 			} else if ((message.matches("REJECTWORD,.+"))) {
-				rejectWordAction(message);
+				this.rejectWordAction(message);
 			} else if (message.matches("NEWWORD .+")) {
-				newWordAction(message, false);
+				this.newWordAction(message, false);
 			} else if (message.matches("POINTS \\d*")) {
-				getPointsAction(message, false);
-				getAdditionalLettersFromBag();
-			}//tutaj trzeba bedzie jeszzcze obsluzyc jedna wiadomość - literki ktore sa w zabrane z worka przez innego gracza
+				this.getPointsAction(message, false);
+				this.getAdditionalLettersFromBag();
+			} else if (message.matches("REMOVELETTERS .+")){
+				System.out.println(message);
+				this.removeLettersFromOpponentBag(message);
+				Platform.runLater(
+						() -> {
+							labelLetters.setText(player2.getLabelLetters());
+							labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
+						  }
+				);
+			}
 		}
 	}
+
+	
+
 
 	/**@author Wojciech Krzywiec */
 	private void getAdditionalLettersFromBag() {
 		//tutaj trzeba bedzie pobrac tablice liter z klasy scrabbleplayer i sprawdzic co brakuje "", pobrac z worka brakujace litery, dodac litery do labelki oraz przeslac literki do drugiego gracza
 		int count = 0;
+		String lettersFromBag[];
 		if (isServer){
 			for (int i = 0; i < player1.getLetters().length; i++) {
 				if (player1.getLetters()[i].equals("")) {
@@ -291,7 +313,8 @@ public class MainWindowController {
 				}
 			}
 		}
-		String lettersFromBag[] = bag.randomLetters(count);
+		lettersFromBag = game.getBag().randomLetters(count);
+		
 		int j = 0;
 		if (isServer){
 			for (int i = 0; i < player1.getLetters().length; i++) {
@@ -300,15 +323,27 @@ public class MainWindowController {
 						j++;
 					}
 			}
-			
 			for (int i = 0; i < player1.getLetters().length; i++) {
 				System.out.println(player1.getLetters()[i]);
 			}
 			Platform.runLater(
 					() -> {
 						labelLetters.setText(player1.getLabelLetters());
+						labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 					  }
 			);
+			StringBuilder out = new StringBuilder("REMOVELETTERS ");
+			for (int i = 0; i < lettersFromBag.length; i++){
+				out.append(lettersFromBag[i]);
+				out.append(",");
+			}
+			out.deleteCharAt(out.length() - 1);
+			try {
+				serverApp.getConnection().send(out.toString());
+			} catch (Exception e) {
+				textarea.appendText("Failed to send \n");
+			}
+			
 		} else {
 			for (int i = 0; i < player2.getLetters().length; i++) {
 				if (player2.getLetters()[i].equals("")){
@@ -324,9 +359,22 @@ public class MainWindowController {
 			Platform.runLater(
 					() -> {
 						labelLetters.setText(player2.getLabelLetters());
+						labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 					  }
 			);
 		}
+		StringBuilder out = new StringBuilder("REMOVELETTERS ");
+		for (int i = 0; i < lettersFromBag.length; i++){
+			out.append(lettersFromBag[i]);
+			out.append(",");
+		}
+		out.deleteCharAt(out.length() - 1);
+		try {
+			clientApp.getConnection().send(out.toString());
+		} catch (Exception e) {
+			textarea.appendText("Failed to send \n");
+		}
+
 	}
 
 
@@ -455,12 +503,6 @@ public class MainWindowController {
 				} catch (Exception e) {
 					textarea.appendText("Failed to send \n");
 				}
-			}
-			StringBuilder lettersFromBag = new StringBuilder("ADDLETTER ");
-			if (isServer) {
-				
-			} else{
-				
 			}
 			enableTextFields();
 			game.setAnotherPlayerTurn();
@@ -613,6 +655,18 @@ public class MainWindowController {
 		}
 		disableTextFields();
 	}
+	/** @author Wojciech Krzywiec */
+	public void removeLettersFromOpponentBag(String message) {
+		String lettersToRemove = message.substring(14);
+		Scanner in = new Scanner(lettersToRemove).useDelimiter(",");
+		StringBuilder out = new StringBuilder();
+		while (in.hasNext()) {
+			game.getBag().removeLetterFromBag(in.next());
+		}
+		in.close();
+
+	}
+	
 	/** @author Wojciech Krzywiec */
 	public void checkLetter(KeyEvent event) {
 

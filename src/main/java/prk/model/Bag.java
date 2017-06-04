@@ -1,5 +1,6 @@
 package prk.model;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Bag {
@@ -79,6 +80,11 @@ public class Bag {
 
 	public int getLettersLeft() {
 		return lettersLeft;
+	}
+
+	public void removeLetterFromBag(String letter) {
+		numberOfLetters[Arrays.asList(letters).indexOf(letter)]--;
+		this.lettersLeft--;
 	}
 
 }
