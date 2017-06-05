@@ -158,6 +158,11 @@ public class MainWindowController {
 				alert.setTitle("Nowe słowo nie przylega do już istniejących!");
 				alert.setHeaderText("Każde nowe słowo musi mieć choć   jedną wspólną literę z już podanymi oraz musi do nich przylegać!");
 				alert.showAndWait();
+			} else if(!this.wordIsWrittenInARowOrColumn()){
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Nowe słowo nie jest ustawione w jednym rzędzie lub kolumnie!");
+				alert.setHeaderText("Każde nowe słowo musi mieć choć musi być ustawione tylko w jednej kolumnie lub jednym rzędzie!");
+				alert.showAndWait();
 			} else {
 				String letters = game.getBoard().getNewLettersFromBoard(convertTextFieldToString());
 				String wholeWord = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
@@ -916,10 +921,8 @@ public class MainWindowController {
 	/**@author Wojciech Krzywiec */
 	public void enableTextFields() {
 		if (this.boardIsEmpty()){
-			for (int i = 1; i < 14; i++){
-				textFieldBoard.get(i).get(7).setDisable(false);
-				textFieldBoard.get(7).get(i).setDisable(false);
-			}
+			this.enableStartingTextFields();
+			
 		} else {
 			for (int i = 0; i < 15; i++) {
 				for (int j = 0; j < 15; j++) {
@@ -965,6 +968,39 @@ public class MainWindowController {
 			}
 		}
 		return true;
+	}
+	
+	private boolean wordIsWrittenInARowOrColumn(){
+		
+		String[][] currentBoard = this.convertTextFieldToString();
+		String[][] previousBoard = game.getBoard().getCurrentStringBoard();
+		ArrayList<Integer> rowIndexArray = new ArrayList<Integer>();
+		ArrayList<Integer> columnIndexArray = new ArrayList<Integer>();
+	
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (!currentBoard[i][j].equals((previousBoard[i][j]))) {
+					rowIndexArray.add(i);
+					columnIndexArray.add(j);
+				} 
+			}
+		}
+		
+		int rowIndex = rowIndexArray.get(0);
+		int columnIndex = columnIndexArray.get(0);
+		boolean output = true;
+		for(int i = 1; i<rowIndexArray.size(); i++){
+			if (rowIndex != rowIndexArray.get(i)){
+				output = false;
+				break;
+			}
+		}
+		
+		for(int i = 1; i<columnIndexArray.size(); i++){
+			if (columnIndex == columnIndexArray.get(i))
+				output = true;
+		}
+		return output;
 	}
 
 
