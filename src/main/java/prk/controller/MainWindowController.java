@@ -279,8 +279,8 @@ public class MainWindowController {
 				}
 
 			} else if (message.matches("LEAVETURN .+")) {
-				this.leaveTurnAction(message);
-				System.out.println("Gracz spasował");
+					this.leaveTurnAction(message);
+					System.out.println("Gracz spasował");				
 			} else if (message.matches("NEWLETTERS \\D*")) {
 				this.newLettersAction(message, false);
 			} else if ((message.matches("REJECTWORD,.+"))) {
@@ -302,9 +302,6 @@ public class MainWindowController {
 			}
 		}
 	}
-
-	
-
 
 	/**@author Wojciech Krzywiec */
 	private void getAdditionalLettersFromBag() {
@@ -461,7 +458,7 @@ public class MainWindowController {
 
 				// doliczenie premii literowej
 				int letterFactor = board.getLetterFactor()[jValue][iValue];
-				points += bag.returnPointsOfLetter(letter) * letterFactor;
+				points += game.getBag().returnPointsOfLetter(letter) * letterFactor;
 
 				// doliczenie premii słownej
 				int wordFactor = board.getWordFactor()[iValue][jValue];
@@ -480,7 +477,7 @@ public class MainWindowController {
 			//doliczenie punktow za litery ktore juz lezaly na planszy
 			for (int ii=0; ii<newWord.length(); ii++){
 				String letter2 = newWord.substring(ii, ii+1);
-				points += bag.returnPointsOfLetter(letter2);
+				points += game.getBag().returnPointsOfLetter(letter2);
 			}
 			
 			if (wordDoubleBonus) {
@@ -536,10 +533,10 @@ public class MainWindowController {
 	public void newLettersAction(String message, boolean isServer) {
 		if (isServer) {
 			textarea.appendText("Gracz 2 wymienił litery, kolej Gracza 1" + "\n");
-			bag.returnLetters(player2.getLetters());
+			game.getBag().returnLetters(player2.getLetters());
 		} else {
 			textarea.appendText("Gracz 1 wymienił litery, kolej Gracza 2" + "\n");
-			bag.returnLetters(player1.getLetters());
+			game.getBag().returnLetters(player1.getLetters());
 		}
 		enableTextFields();
 
@@ -549,7 +546,7 @@ public class MainWindowController {
 		int counter = 0;
 		for (int i = 0; i < numberOfNewLetters; i++) {
 			String c = String.valueOf(newLetters.charAt(counter));
-			bag.findAndSubtract(c);
+			game.getBag().findAndSubtract(c);
 			if (isServer) {
 				player2.getLetters()[i] = c;
 			} else {
@@ -557,7 +554,7 @@ public class MainWindowController {
 			}
 			counter = counter + 2;
 		}
-		labelBag.setText("Worek: " + String.valueOf(bag.getLettersLeft()) + " płytek");
+		labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 		game.setAnotherPlayerTurn();
 		;
 	}
@@ -570,101 +567,110 @@ public class MainWindowController {
 	
 	/**@author Maciej Gawlowski */
 	public void changeLetters() {
-		// ustalenie kto nacisnął przycisk, aby nie powielać kodu
-		ScrabblePlayer currentPlayer;
-		if (this.isServer) {
-			currentPlayer = player1;
-		} else {
-			currentPlayer = player2;
-		}
-
-		if (currentPlayer.isMyTurn()) {
-			String[] random = null;
-			if (bag.getLettersLeft() == 0) {
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Worek jest pusty!");
-				alert.setHeaderText("Worek jest pusty!");
-				alert.showAndWait();
+		
+		if (this.newLettersWereAddedToBoard()){
+			this.newLettersWereAddedToBoardAction();
+		} else{
+			// ustalenie kto nacisnął przycisk, aby nie powielać kodu
+			ScrabblePlayer currentPlayer;
+			if (this.isServer) {
+				currentPlayer = player1;
 			} else {
-				if (bag.getLettersLeft() > 6) {
-					random = new String[7];
-					random = bag.randomLetters(7);
-				} else {
-					random = new String[bag.getLettersLeft()];
-					random = bag.randomLetters(bag.getLettersLeft());
-				}
-				bag.returnLetters(currentPlayer.getLetters());
-				currentPlayer.setLetters(random);
-
-				// budowanie stringa do wysłania
-				StringBuilder newLetters = new StringBuilder();
-				newLetters.append("NEWLETTERS ");
-				for (String c : currentPlayer.getLetters()) {
-					newLetters.append(c).append(" ");
-				}
-
-				StringBuilder lettersForLabel = new StringBuilder();
-				for (String c : currentPlayer.getLetters()) {
-					lettersForLabel.append(c).append(" ");
-				}
-				labelLetters.setText(lettersForLabel.toString());
-
-				String message = null;
-				if (currentPlayer == player1) {
-					message = "Gracz 1 wymienił litery, kolej Gracza 2";
-					try {
-						serverApp.getConnection().send(newLetters);
-						textarea.appendText(message + "\n");
-					} catch (Exception e) {
-						textarea.appendText("Failed to send \n");
-					}
-				} else if (currentPlayer == player2) {
-					message = "Gracz 2 wymienił litery, kolej Gracza 1";
-					try {
-						clientApp.getConnection().send(newLetters);
-						textarea.appendText(message + "\n");
-					} catch (Exception e) {
-						textarea.appendText("Failed to send \n");
-					}
-				}
-				labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
-				game.setAnotherPlayerTurn();
+				currentPlayer = player2;
 			}
-		} else {
-			textarea.appendText("Czekaj na swoją kolej! \n");
+
+			if (currentPlayer.isMyTurn()) {
+				String[] random = null;
+				if (game.getBag().getLettersLeft() == 0) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Worek jest pusty!");
+					alert.setHeaderText("Worek jest pusty!");
+					alert.showAndWait();
+				} else {
+					if (game.getBag().getLettersLeft() > 6) {
+						random = new String[7];
+						random = game.getBag().randomLetters(7);
+					} else {
+						random = new String[game.getBag().getLettersLeft()];
+						random = game.getBag().randomLetters(game.getBag().getLettersLeft());
+					}
+					game.getBag().returnLetters(currentPlayer.getLetters());
+					currentPlayer.setLetters(random);
+
+					// budowanie stringa do wysłania
+					StringBuilder newLetters = new StringBuilder();
+					newLetters.append("NEWLETTERS ");
+					for (String c : currentPlayer.getLetters()) {
+						newLetters.append(c).append(" ");
+					}
+
+					StringBuilder lettersForLabel = new StringBuilder();
+					for (String c : currentPlayer.getLetters()) {
+						lettersForLabel.append(c).append(" ");
+					}
+					labelLetters.setText(lettersForLabel.toString());
+
+					String message = null;
+					if (currentPlayer == player1) {
+						message = "Gracz 1 wymienił litery, kolej Gracza 2";
+						try {
+							serverApp.getConnection().send(newLetters);
+							textarea.appendText(message + "\n");
+						} catch (Exception e) {
+							textarea.appendText("Failed to send \n");
+						}
+					} else if (currentPlayer == player2) {
+						message = "Gracz 2 wymienił litery, kolej Gracza 1";
+						try {
+							clientApp.getConnection().send(newLetters);
+							textarea.appendText(message + "\n");
+						} catch (Exception e) {
+							textarea.appendText("Failed to send \n");
+						}
+					}
+					labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
+					game.setAnotherPlayerTurn();
+				}
+			} else {
+				textarea.appendText("Czekaj na swoją kolej! \n");
+			}
+			disableTextFields();
 		}
-		disableTextFields();
 	}
 	/**@author Maciej Gawlowski */
 	public void leaveTurn() {
-		if (this.isServer) {
-			if (player1.isMyTurn()) {
-				game.setPlayer2Turn();
-				String message = "Gracz 1 spasował, kolej Gracza 2";
-				try {
-					serverApp.getConnection().send("LEAVETURN " + message);
-					textarea.appendText(message + "\n");
-				} catch (Exception e) {
-					textarea.appendText("Failed to send \n");
+		if (this.newLettersWereAddedToBoard()){
+			this.newLettersWereAddedToBoardAction();
+		} else{
+			if (this.isServer) {
+				if (player1.isMyTurn()) {
+					game.setPlayer2Turn();
+					String message = "Gracz 1 spasował, kolej Gracza 2";
+					try {
+						serverApp.getConnection().send("LEAVETURN " + message);
+						textarea.appendText(message + "\n");
+					} catch (Exception e) {
+						textarea.appendText("Failed to send \n");
+					}
+				} else {
+					textarea.appendText("Czekaj na swoją kolej! \n");
 				}
 			} else {
-				textarea.appendText("Czekaj na swoją kolej! \n");
-			}
-		} else {
-			if (player2.isMyTurn()) {
-				game.setPlayer1Turn();
-				String message = "Gracz 2 spasował, kolej Gracza 1";
-				try {
-					clientApp.getConnection().send("LEAVETURN " + message);
-					textarea.appendText(message + "\n");
-				} catch (Exception e) {
-					textarea.appendText("Failed to send \n");
+				if (player2.isMyTurn()) {
+					game.setPlayer1Turn();
+					String message = "Gracz 2 spasował, kolej Gracza 1";
+					try {
+						clientApp.getConnection().send("LEAVETURN " + message);
+						textarea.appendText(message + "\n");
+					} catch (Exception e) {
+						textarea.appendText("Failed to send \n");
+					}
+				} else {
+					textarea.appendText("Czekaj na swoją kolej! \n");
 				}
-			} else {
-				textarea.appendText("Czekaj na swoją kolej! \n");
 			}
+			disableTextFields();
 		}
-		disableTextFields();
 	}
 	/** @author Wojciech Krzywiec */
 	public void removeLettersFromOpponentBag(String message) {
@@ -1063,6 +1069,33 @@ public class MainWindowController {
 		}
 		return wordIsNextToExisiting;
 	}
+	
+	/** @author Wojciech Krzywiec */
+	private boolean newLettersWereAddedToBoard(){
+		String[][] currentBoard = this.convertTextFieldToString();
+		String[][] previousBoard = game.getBoard().getCurrentStringBoard();
+		boolean output = false;
+		
+		outerLoop:
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (!currentBoard[i][j].equals(previousBoard[i][j])) {
+					output = true;
+					break outerLoop;
+				};
+			}
+		}
+		return output;
+	}
+	
+	/** @author Wojciech Krzywiec */
+	private void newLettersWereAddedToBoardAction() {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Na planszy są litery z bieżącej tury!");
+		alert.setHeaderText("Usuń wszystkie litery dodane w bieżącej turze!");
+		alert.showAndWait();
+	}
+
 
 
 	/**@author Maciej Gawlowski */
