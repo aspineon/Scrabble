@@ -21,30 +21,6 @@ public class ScrabblePlayer {
 	public void setLetter(int index, String letter){
 		letters[index] = letter;
 	}
-
-	public boolean isMyTurn() {
-		return myTurn;
-	}
-
-	public void setMyTurn(boolean myTurn) {
-		this.myTurn = myTurn;
-	}
-
-	public int getPoints() {
-		return points;
-	}
-
-	public void setPoints(int points) {
-		this.points = points;
-	}
-
-	public String[] getLetters() {
-		return letters;
-	}
-
-	public void setLetters(String[] letters) {
-		this.letters = letters;
-	}
 	
 	public String getLabelLetters(){
 		StringBuilder labelLetters = new StringBuilder();
@@ -68,9 +44,40 @@ public class ScrabblePlayer {
 		if (!letters[i].equals("")) i++;
 		letters[i] = letter;
 	}
+	
+	public void cleanUsedLetters() {
+		for (int i = 0; i < usedLetters.length; i++){
+			usedLetters[i] = "";
+		}
+		
+	}
 
 	public String[] getUsedLetters() {
 		return usedLetters;
+	}
+
+	public boolean isMyTurn() {
+		return myTurn;
+	}
+
+	public void setMyTurn(boolean myTurn) {
+		this.myTurn = myTurn;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
+	}
+
+	public String[] getLetters() {
+		return letters;
+	}
+
+	public void setLetters(String[] letters) {
+		this.letters = letters;
 	}
 
 	public void setUsedLetters(String[] usedLetters) {

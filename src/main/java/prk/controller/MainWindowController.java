@@ -517,7 +517,11 @@ public class MainWindowController {
 			removeNewLettersFromBoard(newLetters);
 			rejectNewLetters(newLetters);
 		}
-		
+		if(this.isServer){
+			player1.cleanUsedLetters();
+		} else {
+			player2.cleanUsedLetters();
+		}
 	}
 
 	/** @author Wojciech Krzywiec */
@@ -686,7 +690,9 @@ public class MainWindowController {
 	/** @author Wojciech Krzywiec */
 	public void checkLetter(KeyEvent event) {
 
-		if (!event.isAltDown() && event.getCode() != KeyCode.DELETE && event.getCode() != KeyCode.BACK_SPACE) {
+		
+
+		if (!event.isAltDown() && !event.isShiftDown() && event.getCode() != KeyCode.DELETE && event.getCode() != KeyCode.BACK_SPACE) {
 
 			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
 			String letter = textfield.getText();
