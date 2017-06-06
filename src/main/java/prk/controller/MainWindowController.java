@@ -176,7 +176,7 @@ public class MainWindowController {
 					} else
 						clientApp.getConnection().send(message);
 				} catch (Exception e) {
-					textarea.appendText("Failed to send \n");
+					textarea.appendText("Failed to send1 \n");
 				}
 			}
 		} else {
@@ -349,7 +349,7 @@ public class MainWindowController {
 			try {
 				serverApp.getConnection().send(out.toString());
 			} catch (Exception e) {
-				textarea.appendText("Failed to send \n");
+				textarea.appendText("Failed to send2 \n");
 			}
 			
 		} else {
@@ -370,7 +370,6 @@ public class MainWindowController {
 						labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 					  }
 			);
-		}
 		StringBuilder out = new StringBuilder("REMOVELETTERS ");
 		for (int i = 0; i < lettersFromBag.length; i++){
 			out.append(lettersFromBag[i]);
@@ -380,9 +379,9 @@ public class MainWindowController {
 		try {
 			clientApp.getConnection().send(out.toString());
 		} catch (Exception e) {
-			textarea.appendText("Failed to send \n");
+			textarea.appendText("Failed to send3 \n");
 		}
-
+		}
 	}
 
 
@@ -497,7 +496,7 @@ public class MainWindowController {
 				try {
 					serverApp.getConnection().send(out);
 				} catch (Exception e) {
-					textarea.appendText("Failed to send \n");
+					textarea.appendText("Failed to send4 \n");
 				}
 			} else {
 				// policz punkty dla przeciwnika i mu je wyslij
@@ -509,7 +508,7 @@ public class MainWindowController {
 				try {
 					clientApp.getConnection().send(out);
 				} catch (Exception e) {
-					textarea.appendText("Failed to send \n");
+					textarea.appendText("Failed to send5 \n");
 				}
 			}
 			enableTextFields();
@@ -617,7 +616,7 @@ public class MainWindowController {
 							serverApp.getConnection().send(newLetters);
 							textarea.appendText(message + "\n");
 						} catch (Exception e) {
-							textarea.appendText("Failed to send \n");
+							textarea.appendText("Failed to send6 \n");
 						}
 					} else if (currentPlayer == player2) {
 						message = "Gracz 2 wymienił litery, kolej Gracza 1";
@@ -625,7 +624,7 @@ public class MainWindowController {
 							clientApp.getConnection().send(newLetters);
 							textarea.appendText(message + "\n");
 						} catch (Exception e) {
-							textarea.appendText("Failed to send \n");
+							textarea.appendText("Failed to send7 \n");
 						}
 					}
 					labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
@@ -650,7 +649,7 @@ public class MainWindowController {
 						serverApp.getConnection().send("LEAVETURN " + message);
 						textarea.appendText(message + "\n");
 					} catch (Exception e) {
-						textarea.appendText("Failed to send \n");
+						textarea.appendText("Failed to send8 \n");
 					}
 				} else {
 					textarea.appendText("Czekaj na swoją kolej! \n");
@@ -663,7 +662,7 @@ public class MainWindowController {
 						clientApp.getConnection().send("LEAVETURN " + message);
 						textarea.appendText(message + "\n");
 					} catch (Exception e) {
-						textarea.appendText("Failed to send \n");
+						textarea.appendText("Failed to send9 \n");
 					}
 				} else {
 					textarea.appendText("Czekaj na swoją kolej! \n");
@@ -837,7 +836,7 @@ public class MainWindowController {
 			} else
 				clientApp.getConnection().send(out.toString());
 		} catch (Exception e) {
-			textarea.appendText("Failed to send \n");
+			textarea.appendText("Failed to send10 \n");
 		}
 		disableTextFields();
 	}
