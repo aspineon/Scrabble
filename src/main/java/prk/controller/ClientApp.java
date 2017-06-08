@@ -4,10 +4,16 @@ import java.io.IOException;
 import java.util.Optional;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import prk.network.Client;
 import prk.network.NetworkConnection;
@@ -55,9 +61,33 @@ public class ClientApp extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		openingDialogToSetIP();
-		this.primaryStage = primaryStage;
-		mainWindow();
+		//openingDialogToSetOponentIP();
+		
+		Stage popup = new Stage();
+		Label label1= new Label("Wprowadz adres IP drugiego gracza");
+		TextField ipField = new TextField();
+		Button btnConfirm = new Button("Zatwierdz");
+        
+		btnConfirm.setOnAction(e -> {
+			ip = ipField.getText();
+			popup.close();
+			this.primaryStage = primaryStage;
+			try {
+				mainWindow();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
+		
+		HBox layout= new HBox(10);
+		layout.getChildren().addAll(label1, ipField, btnConfirm);
+		layout.setAlignment(Pos.CENTER);
+		
+		Scene scene1= new Scene(layout, 300, 250);
+	      
+		popup.setScene(scene1); 
+		popup.showAndWait();
+		
 	}
 
 	@Override
@@ -75,16 +105,17 @@ public class ClientApp extends Application {
 		});
 	}
 	
-	public void openingDialogToSetIP(){
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Wprowadzanie IP serwera");
-		dialog.setHeaderText("Podaj adres IP serwera z którym chcesz się połączyć");
-		dialog.setContentText("Adres serwera: ");
+	public void openingDialogToSetOponentIP(){
+		Platform.runLater(()-> {
+			TextInputDialog dialog = new TextInputDialog();
+			dialog.setTitle("Wprowadzanie IP serwera");
+			dialog.setHeaderText("Podaj adres IP serwera z którym chcesz się połączyć");
+			dialog.setContentText("Adres serwera: ");
 
-		
-		Optional<String> result = dialog.showAndWait();
-		ip = result.get();
-
+			
+			Optional<String> result = dialog.showAndWait();
+			ip = result.get();
+		});
 	}
 
 	public boolean isServer() {
