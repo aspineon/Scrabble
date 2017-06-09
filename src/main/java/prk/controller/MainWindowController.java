@@ -192,6 +192,7 @@ public class MainWindowController {
 		if (isServer) {
 			if (message.equals("Gracz 2 się połączył")) {
 				Platform.runLater(() -> {
+					serverApp.getWelcomeStage().close();
 					getTextarea().appendText(message + "\n");
 				});
 				StringBuilder welcomeLetters = new StringBuilder();

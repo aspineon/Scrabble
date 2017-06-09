@@ -5,10 +5,15 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import prk.model.Bag;
 import prk.model.Game;
@@ -27,6 +32,7 @@ public class ServerApp extends Application {
 	private MainWindowController mainWindowController;
 
 	private Stage primaryStage;
+	private Stage welcomeStage;
 	private NetworkConnection connection = createServer();
 
 	public void mainWindow() {
@@ -48,6 +54,18 @@ public class ServerApp extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Scrabble: Gracz 1");
 		primaryStage.show();
+		
+		welcomeStage = new Stage();
+		Label label1= new Label("Oczekiwanie na przeciwnika");
+		HBox layout= new HBox(10);
+		layout.getChildren().addAll(label1);
+		layout.setAlignment(Pos.CENTER);
+		
+		Scene scene1= new Scene(layout, 300, 250);
+		welcomeStage.setScene(scene1); 
+		welcomeStage.initOwner(primaryStage);
+		welcomeStage.initModality(Modality.WINDOW_MODAL);
+		welcomeStage.showAndWait();
 	}
 
 	@Override
@@ -71,7 +89,7 @@ public class ServerApp extends Application {
 	}
 
 	private Server createServer() {
-		return new Server(55555, data -> {
+		return new Server(7007, data -> {
 			mainWindowController.getMessage(data.toString());
 		});
 	}
@@ -82,5 +100,9 @@ public class ServerApp extends Application {
 
 	public NetworkConnection getConnection() {
 		return connection;
+	}
+
+	public Stage getWelcomeStage() {
+		return welcomeStage;
 	}
 }
