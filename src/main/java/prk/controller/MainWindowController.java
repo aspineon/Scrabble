@@ -33,7 +33,7 @@ import prk.model.TextFieldLimited;
  */
 
 public class MainWindowController {
-	// komentarz
+	
 	private Stage primaryStage;
 	private ServerApp serverApp;
 	private ClientApp clientApp;
@@ -310,7 +310,6 @@ public class MainWindowController {
 
 	/**@author Wojciech Krzywiec */
 	private void getAdditionalLettersFromBag() {
-		//tutaj trzeba bedzie pobrac tablice liter z klasy scrabbleplayer i sprawdzic co brakuje "", pobrac z worka brakujace litery, dodac litery do labelki oraz przeslac literki do drugiego gracza
 		int count = 0;
 		String lettersFromBag[];
 		if (isServer){
@@ -711,8 +710,6 @@ public class MainWindowController {
 	/** @author Wojciech Krzywiec */
 	public void checkLetter(KeyEvent event) {
 
-		
-
 		if (!event.isAltDown() && !event.isShiftDown() && event.getCode() != KeyCode.DELETE && event.getCode() != KeyCode.BACK_SPACE) {
 
 			TextFieldLimited textfield = (TextFieldLimited) event.getSource();
@@ -992,7 +989,7 @@ public class MainWindowController {
 			}
 		}
 	}
-	
+	/**@author Wojciech Krzywiec */
 	private boolean boardIsEmpty() {
 		for (int i= 0; i<15; i++){
 			for (int j = 0; j <15; j++){
@@ -1001,7 +998,7 @@ public class MainWindowController {
 		}
 		return true;
 	}
-	
+	/**@author Wojciech Krzywiec */
 	private boolean wordIsWrittenInARowOrColumn(){
 		
 		String[][] currentBoard = this.convertTextFieldToString();
