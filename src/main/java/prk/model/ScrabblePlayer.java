@@ -57,7 +57,7 @@ public class ScrabblePlayer {
 		for (int i = 0; i < letters.length; i++){
 			if (letters[i].equals("")) count++;
 		}
-		if (count == 0) out = true;
+		if (count == letters.length) out = true;
 		return out;
 	}
 

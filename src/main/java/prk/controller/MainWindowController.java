@@ -167,7 +167,6 @@ public class MainWindowController {
 				String letters = game.getBoard().getNewLettersFromBoard(convertTextFieldToString());
 				String wholeWord = game.getBoard().getNewWordFromBoard(convertTextFieldToString());
 				String message = "NEWWORD " + letters + " " + wholeWord;
-				textarea.appendText(message + "\n");
 				disableTextFields();
 				game.setAnotherPlayerTurn();
 				try {
@@ -226,6 +225,7 @@ public class MainWindowController {
 			} else if (message.matches("POINTS \\d*")) {
 				getPointsAction(message, true);
 				getAdditionalLettersFromBag();
+				textarea.appendText("Kolej na Gracza 2\n");
 			} else if (message.matches("REMOVELETTERS .+")){
 				this.removeLettersFromOpponentBag(message);
 				Platform.runLater(
@@ -292,6 +292,7 @@ public class MainWindowController {
 			} else if (message.matches("POINTS \\d*")) {
 				this.getPointsAction(message, false);
 				this.getAdditionalLettersFromBag();
+				textarea.appendText("Kolej na Gracza 1\n");
 			} else if (message.matches("REMOVELETTERS .+")){
 				this.removeLettersFromOpponentBag(message);
 				Platform.runLater(
@@ -416,7 +417,6 @@ public class MainWindowController {
 		String newWord = newLetters.substring(coordinatesLength+1);
 		newLetters = newLetters.substring(0, coordinatesLength);
 		
-		textarea.appendText(newLetters + "\n");
 		addNewWordToBoard(newLetters);
 		if (isWordValid(newLetters, newWord)) {
 			int i = 0; // pozycja wspolrzednej i w ciągu znaków message
@@ -516,9 +516,11 @@ public class MainWindowController {
 		}
 		if(this.isServer){
 			player1.cleanUsedLetters();
+			textarea.appendText("Kolej na Gracza 1\n");
 			
 		} else {
 			player2.cleanUsedLetters();
+			textarea.appendText("Kolej na Gracza 2\n");
 		}
 
 		if (player1.HaveNoLetter() || player2.HaveNoLetter()){
