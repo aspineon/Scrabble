@@ -217,7 +217,6 @@ public class MainWindowController {
 				getTextarea().appendText("Zaczyna " + getGame().getStartingPlayer() + "\n");
 			} else if (message.matches("LEAVETURN .+")) {
 				leaveTurnAction(message);
-				System.out.println("Gracz spasował");
 			} else if (message.matches("NEWLETTERS \\D*")) {
 				newLettersAction(message, true);
 			} else if ((message.matches("REJECTWORD,.+"))) {
@@ -228,7 +227,6 @@ public class MainWindowController {
 				getPointsAction(message, true);
 				getAdditionalLettersFromBag();
 			} else if (message.matches("REMOVELETTERS .+")){
-				System.out.println(message);
 				this.removeLettersFromOpponentBag(message);
 				Platform.runLater(
 						() -> {
@@ -236,6 +234,10 @@ public class MainWindowController {
 							labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 						  }
 				);
+			} else if (message.matches("END .+")){
+				textarea.appendText("KONIEC GRY!\n");
+				textarea.appendText(message.substring(4));
+				this.disableTextFields();
 			}
 		} else {
 			if (message.matches("WELCOMELETTERS \\D* \\d*")) {
@@ -280,8 +282,7 @@ public class MainWindowController {
 				}
 
 			} else if (message.matches("LEAVETURN .+")) {
-					this.leaveTurnAction(message);
-					System.out.println("Gracz spasował");				
+					this.leaveTurnAction(message);			
 			} else if (message.matches("NEWLETTERS \\D*")) {
 				this.newLettersAction(message, false);
 			} else if ((message.matches("REJECTWORD,.+"))) {
@@ -292,7 +293,6 @@ public class MainWindowController {
 				this.getPointsAction(message, false);
 				this.getAdditionalLettersFromBag();
 			} else if (message.matches("REMOVELETTERS .+")){
-				System.out.println(message);
 				this.removeLettersFromOpponentBag(message);
 				Platform.runLater(
 						() -> {
@@ -300,6 +300,10 @@ public class MainWindowController {
 							labelBag.setText("Worek: " + String.valueOf(game.getBag().getLettersLeft()) + " płytek");
 						  }
 				);
+			} else if (message.matches("END .+")){
+				textarea.appendText("KONIEC GRY!\n");
+				textarea.appendText(message.substring(4));
+				this.disableTextFields();
 			}
 		}
 	}
@@ -332,9 +336,6 @@ public class MainWindowController {
 						j++;
 					}
 			}
-			for (int i = 0; i < player1.getLetters().length; i++) {
-				System.out.println(player1.getLetters()[i]);
-			}
 			Platform.runLater(
 					() -> {
 						labelLetters.setText(player1.getLabelLetters());
@@ -360,10 +361,6 @@ public class MainWindowController {
 					j++;
 				}
 		}
-			
-			for (int i = 0; i < player2.getLetters().length; i++) {
-				System.out.println(player2.getLetters()[i]);
-			}
 
 			Platform.runLater(
 					() -> {
@@ -524,12 +521,28 @@ public class MainWindowController {
 		} else {
 			player2.cleanUsedLetters();
 		}
-		System.out.println("Zostało " + game.getBag().getLettersLeft());
-		if (game.getBag().getLettersLeft() == 0){
-			if (player1.HaveNoLetter() || player2.HaveNoLetter()){
-				this.endGame();
+
+		if (player1.HaveNoLetter() || player2.HaveNoLetter()){
+					this.endGame();
+					String out = "END ";
+					
+					if (player1.getPoints() > player2.getPoints()) out = out + "Wygrywa Gracz 1!!!";
+					else if (player1.getPoints() < player2.getPoints()) out = out + "Wygrywa Gracz 2!!!";
+					else out = out + "Mamy remis!!!";
+					if (this.isServer){
+						try {
+							serverApp.getConnection().send(out);
+						} catch (Exception e) {
+							textarea.appendText("Failed to send4 \n");
+						}
+					} else {
+						try {
+							clientApp.getConnection().send(out);
+						} catch (Exception e) {
+							textarea.appendText("Failed to send5 \n");
+						}
+					}
 			}
-		}
 	}
 
 	/** @author Wojciech Krzywiec */
