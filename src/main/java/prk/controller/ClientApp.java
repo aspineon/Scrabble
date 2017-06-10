@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import prk.network.Client;
 import prk.network.NetworkConnection;
@@ -54,18 +55,13 @@ public class ClientApp extends Application {
 		primaryStage.show();
 	}
 
-//	@Override
-//	public void init() throws Exception {
-//		//connection.startConnection();
-//	}
-
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		//openingDialogToSetOponentIP();
 		Stage popup = new Stage();
-		Label label1= new Label("Wprowadz adres IP drugiego gracza");
+		Label label1= new Label("Adres IP drugiego gracza: ");
+		label1.setTextFill(Color.WHITE);
 		TextField ipField = new TextField();
-		Button btnConfirm = new Button("Zatwierdz");
+		Button btnConfirm = new Button("Zatwierdź");
         
 		btnConfirm.setOnAction(e -> {
 			ip = ipField.getText();
@@ -87,8 +83,9 @@ public class ClientApp extends Application {
 		HBox layout= new HBox(10);
 		layout.getChildren().addAll(label1, ipField, btnConfirm);
 		layout.setAlignment(Pos.CENTER);
+		layout.setStyle("-fx-background-color: #01584f;");
 		
-		Scene scene1= new Scene(layout, 300, 250);
+		Scene scene1= new Scene(layout, 400, 100);
 		popup.setScene(scene1); 
 		popup.showAndWait();
 	}
@@ -107,19 +104,6 @@ public class ClientApp extends Application {
 			mainWindowController.getMessage(data.toString());
 		});
 	}
-	
-//	public void openingDialogToSetOponentIP(){
-//		Platform.runLater(()-> {
-//			TextInputDialog dialog = new TextInputDialog();
-//			dialog.setTitle("Wprowadzanie IP serwera");
-//			dialog.setHeaderText("Podaj adres IP serwera z którym chcesz się połączyć");
-//			dialog.setContentText("Adres serwera: ");
-//
-//			
-//			Optional<String> result = dialog.showAndWait();
-//			ip = result.get();
-//		});
-//	}
 
 	public boolean isServer() {
 		return false;

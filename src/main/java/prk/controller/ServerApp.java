@@ -13,6 +13,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import prk.model.Bag;
@@ -57,10 +58,11 @@ public class ServerApp extends Application {
 		
 		welcomeStage = new Stage();
 		Label label1= new Label("Oczekiwanie na przeciwnika");
+		label1.setTextFill(Color.WHITE);
 		HBox layout= new HBox(10);
 		layout.getChildren().addAll(label1);
 		layout.setAlignment(Pos.CENTER);
-		
+		layout.setStyle("-fx-background-color: #01584f;");
 		Scene scene1= new Scene(layout, 300, 250);
 		welcomeStage.setScene(scene1); 
 		welcomeStage.initOwner(primaryStage);

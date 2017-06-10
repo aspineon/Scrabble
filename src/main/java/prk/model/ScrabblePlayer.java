@@ -49,7 +49,16 @@ public class ScrabblePlayer {
 		for (int i = 0; i < usedLetters.length; i++){
 			usedLetters[i] = "";
 		}
-		
+	}
+	
+	public boolean HaveNoLetter(){
+		boolean out = false;
+		int count = 0;
+		for (int i = 0; i < letters.length; i++){
+			if (letters[i].equals("")) count++;
+		}
+		if (count == letters.length) out = true;
+		return out;
 	}
 
 	public String[] getUsedLetters() {

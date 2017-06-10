@@ -520,8 +520,15 @@ public class MainWindowController {
 		}
 		if(this.isServer){
 			player1.cleanUsedLetters();
+			
 		} else {
 			player2.cleanUsedLetters();
+		}
+		System.out.println("Zostało " + game.getBag().getLettersLeft());
+		if (game.getBag().getLettersLeft() == 0){
+			if (player1.HaveNoLetter() || player2.HaveNoLetter()){
+				this.endGame();
+			}
 		}
 	}
 
@@ -1101,8 +1108,17 @@ public class MainWindowController {
 		alert.setHeaderText("Usuń wszystkie litery dodane w bieżącej turze!");
 		alert.showAndWait();
 	}
+	
+	/** @author Wojciech Krzywiec */
+	private void endGame() {
 
-
+		textarea.appendText("KONIEC GRY!\n");
+		if (player1.getPoints() > player2.getPoints()) textarea.appendText("Wygrywa Gracz 1!!!");
+		else if (player1.getPoints() < player2.getPoints()) textarea.appendText("Wygrywa Gracz 2!!!");
+		else textarea.appendText("Mamy remis!!!");
+		
+		this.disableTextFields();
+	}
 
 	/**@author Maciej Gawlowski */
 	public void confirmConnection() throws Exception {

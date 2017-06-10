@@ -20,6 +20,7 @@ public class Bag {
 	/**@author Maciej Gawlowski */
 	// jako parametr licba literek do wylosowania
 	public String[] randomLetters(int number) {
+		if (lettersLeft < number) number = lettersLeft;
 		String[] randomLetters = new String[number];
 		for (int i = 0; i < number; i++) {
 			int index = rand.nextInt(33);
